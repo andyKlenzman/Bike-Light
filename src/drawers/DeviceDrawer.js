@@ -1,20 +1,44 @@
-import React, {useContext} from 'react';
-import {StyleSheet, View, TouchableOpacity} from 'react-native';
+import React, {useContext, useEffect} from 'react';
+import {StyleSheet, View, TouchableOpacity, Text} from 'react-native';
 import Context from '../state/Context';
-
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from 'react-native-reanimated';
+import {Dimensions} from 'react-native';
+import BluetoothMain from '../components/🟣🟣🟣 BluetoothMain';
 const DeviceDrawer = () => {
   const {globalState, setGlobalState} = useContext(Context);
+  const screenWidth = Dimensions.get('window').width;
+  const rightDrawerX = useSharedValue(screenWidth);
+
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [{translateX: rightDrawerX.value}],
+    };
+  });
+
+  useEffect(() => {
+    rightDrawerX.value = withTiming(
+      globalState.isDeviceDrawerOpen ? 0 : screenWidth,
+      {duration: 200},
+    );
+  }, [globalState.isDeviceDrawerOpen]);
 
   return (
-    <View style={styles.drawerContainer}>
+    <Animated.View style={[styles.drawerContainer, animatedStyles]}>
       <TouchableOpacity
         style={styles.overlay}
         onPress={() =>
           setGlobalState({...globalState, isDeviceDrawerOpen: false})
         }
       />
-      <View style={styles.rightDrawer}></View>
-    </View>
+      <View style={styles.rightDrawer}>
+        <Text style={styles.content}>Device Content</Text>
+        <BluetoothMain />
+      </View>
+    </Animated.View>
   );
 };
 
@@ -27,25 +51,22 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    color: 'white',
   },
   rightDrawer: {
     position: 'absolute',
     top: 0,
     bottom: 0,
     right: 0,
-    width: '80%',
-    backgroundColor: '#fff',
-    borderLeftWidth: 1,
-    borderColor: '#ccc',
+    width: '50%',
+    backgroundColor: 'rgba(0,0,0,0.8)',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
-    zIndex: 2,
   },
 });

@@ -1,20 +1,45 @@
-import React, {useContext} from 'react';
-import {StyleSheet, View, TouchableOpacity, SafeAreaView} from 'react-native';
+import React, {useContext, useEffect} from 'react';
+import {StyleSheet, View, TouchableOpacity, Text} from 'react-native';
 import Context from '../state/Context';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  withDecay,
+} from 'react-native-reanimated';
+import {Dimensions} from 'react-native';
 
 const SettingsDrawer = () => {
   const {globalState, setGlobalState} = useContext(Context);
+  const screenWidth = Dimensions.get('window').width;
+  const leftDrawerX = useSharedValue(-screenWidth);
+
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [{translateX: leftDrawerX.value}],
+    };
+  });
+
+  useEffect(() => {
+    leftDrawerX.value = withTiming(
+      globalState.isSettingsDrawerOpen ? 0 : -screenWidth,
+      {duration: 200},
+    );
+  }, [globalState.isSettingsDrawerOpen]);
 
   return (
-    <View style={styles.drawerContainer}>
+    <Animated.View style={[styles.drawerContainer, animatedStyles]}>
       <TouchableOpacity
         style={styles.overlay}
         onPress={() =>
           setGlobalState({...globalState, isSettingsDrawerOpen: false})
         }
       />
-      <View style={styles.leftDrawer}></View>
-    </View>
+      <View style={styles.leftDrawer}>
+        <Text style={styles.content}>Settings Content</Text>
+      </View>
+    </Animated.View>
   );
 };
 
@@ -27,13 +52,13 @@ const styles = StyleSheet.create({
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.5)',
   },
 
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    color: 'white',
   },
 
   leftDrawer: {
@@ -41,10 +66,8 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     left: 0,
-    width: '80%',
-    backgroundColor: '#fff',
-    borderRightWidth: 1,
-    borderColor: '#ccc',
+    width: '50%',
+    backgroundColor: 'rgba(0,0,0,0.8)',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
