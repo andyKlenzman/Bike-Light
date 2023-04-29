@@ -6,12 +6,10 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 // import {bleManager} from '../utils/bluetooth/bluetoothManger';
 import EmptyList from '../utils/EmptyList';
-import BluetoothPairing from './🟣🟣 BluetoothPairing';
-// import {bleManager} from '../utils/bluetooth/bluetoothManger';
-import EmptyList from '../utils/EmptyList';
+import { bleManager } from '../utils/Bluetooth/bluetoothManager';
 
 /*
     Flow for BT device setup. Can handle multiple devices. 
@@ -31,6 +29,18 @@ LT Notes:
  - 
   */
 
+
+   // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     console.log('setInterval running',);
+  //   }, 1000);
+
+  //   return () => {
+  //     clearInterval(intervalId);
+  //   };
+  // }, []);
+
+  
 const BluetoothPairing = () => {
   const [btState, setBtState] = useState();
   const [scannedDevices, setScannedDevices] = useState([]);
@@ -202,7 +212,7 @@ const BluetoothPairing = () => {
   };
 
   return (
-    <View style={globalStyles.container.spacedBetween}>
+    <View >
       {btState !== 'PoweredOn' && (
         <View>
           <Text>Turn on Bluetooth</Text>

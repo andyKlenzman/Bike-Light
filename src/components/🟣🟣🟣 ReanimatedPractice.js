@@ -87,8 +87,8 @@ const ReanimatedPractice = () => {
     const y = Math.abs(MagneticSensor.sensor.value.y);
     const z = Math.abs(Math.round(MagneticSensor.sensor.value.z) * 10);
     return {
-      height: withTiming(x * 2 + 20, {duration: 100}), // <- usage
-      width: withTiming(y * 2 + 20, {duration: 100}), // <- usage
+      height: withTiming(x, {duration: 100}), // <- usage
+      width: withTiming(y, {duration: 100}), // <- usage
       backgroundColor: `hsl(${z}, 50%,50%)`, // <- usage
     };
   });
