@@ -6,42 +6,45 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useContext} from 'react';
+import Context from '../state/Context';
 // import {bleManager} from '../utils/bluetooth/bluetoothManger';
 import EmptyList from '../utils/EmptyList';
-import { bleManager } from '../utils/Bluetooth/bluetoothManager';
-
+import {bleManager} from '../utils/Bluetooth/bluetoothManager';
+import {BluetoothListItem, renderScannedItem} from './🟣 BluetoothListItem';
 /*
-    Flow for BT device setup. Can handle multiple devices. 
+  Purpose: User flow and mechanics for BT device connection. Can handle multiple devices. 
 
 Doing:
-    - Copy and Paste
 
 To-do:
-  - Test main functionality
-  - Fit into drawers and adapt UI
-  - Style
-  - 
+  - Style bluetooth paring process
+  - Plan BT structure, (how to abstract pairing, writing data functions, context, etc.)
+  - load BT data into context
+  - Test BT Functionality (with set interval) (will performance lag if readSensors is called twice in app, better to try to load it into context again now that I know it needs the whole obj)
 
 ST NOTES:
- - I could try to abstract all of these function into a folder in UTILS, christ it's overwhelming in this file. 
+  - How am I going to strcuture this? I am going to be using the BT state, etc, for a lot of things besides pairing. I'm going to use it to hit the user on the head with shit. Maybe the BT state for example, could be called at the beginning of the app, then use that to show a message, or read the length of connected devices to make the bluetooth button flashing to get someone started. 
 LT Notes:
- - 
+  - I can abstract renderSCannwedItems when I've got the connected items into the context
+  - 
   */
 
+// useEffect(() => {
+//   const intervalId = setInterval(() => {
+//     console.log('setInterval running',);
+//   }, 1000);
 
-   // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     console.log('setInterval running',);
-  //   }, 1000);
+//   return () => {
+//     clearInterval(intervalId);
+//   };
+// }, []);
 
-  //   return () => {
-  //     clearInterval(intervalId);
-  //   };
-  // }, []);
-
-  
 const BluetoothPairing = () => {
+  //load in the context here
+  const {globalState, setGlobalState} = useContext(Context);
+
+
   const [btState, setBtState] = useState();
   const [scannedDevices, setScannedDevices] = useState([]);
   const [connectedDevices, setConnectedDevices] = useState([]);
@@ -195,7 +198,7 @@ const BluetoothPairing = () => {
         : 'Not Connected';
 
     return (
-      <Item
+      <BluetoothListItem
         item={item}
         connectionStatus={connectionStatus}
         onPress={() => connectToDevice(item)}
@@ -212,7 +215,7 @@ const BluetoothPairing = () => {
   };
 
   return (
-    <View >
+    <View>
       {btState !== 'PoweredOn' && (
         <View>
           <Text>Turn on Bluetooth</Text>
@@ -242,20 +245,6 @@ const BluetoothPairing = () => {
     </View>
   );
 };
-
-const Item = ({
-  item,
-  connectionStatus,
-  onPress,
-  backgroundColor,
-  textColor,
-}) => (
-  <TouchableOpacity onPress={onPress} style={[styles.item, {backgroundColor}]}>
-    <Text style={[styles.title, {color: textColor}]}>
-      {item.name ? item.name : item.id} {connectionStatus}
-    </Text>
-  </TouchableOpacity>
-);
 
 const styles = StyleSheet.create({
   container: {

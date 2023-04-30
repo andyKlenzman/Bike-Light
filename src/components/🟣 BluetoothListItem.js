@@ -1,4 +1,31 @@
-import {Text, TouchableOpacity} from 'react-native';
+import {Text, TouchableOpacity, StyleSheet} from 'react-native';
+
+
+export const renderScannedItem = ({item}) => {
+  let isConnected = connectedDevices.some(device => {
+    return device.deviceID === item.id;
+  });
+
+  const backgroundColor = item.id === isLoading ? 'grey' : 'orange';
+  const color = 'white';
+  const connectionStatus =
+    item.id === isLoading
+      ? 'Loading'
+      : isConnected
+      ? 'Connected'
+      : 'Not Connected';
+
+  return (
+    <BluetoothListItem
+      item={item}
+      connectionStatus={connectionStatus}
+      onPress={() => connectToDevice(item)}
+      backgroundColor={backgroundColor}
+      textColor={color}
+    />
+  );
+};
+
 
 export const BluetoothListItem = ({
   item,
@@ -13,3 +40,17 @@ export const BluetoothListItem = ({
     </Text>
   </TouchableOpacity>
 );
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 50,
+    flex: 1,
+  },
+  item: {
+    padding: 10,
+    fontSize: 15,
+  },
+  button: {
+    backgroundColor: '#1E6738',
+  },
+});
