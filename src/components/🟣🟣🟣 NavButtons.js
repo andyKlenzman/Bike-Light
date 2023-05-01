@@ -9,7 +9,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 const NavButtons = () => {
-  const {globalState, setGlobalState} = useContext(Context);
+  const {drawerState, setDrawerState} = useContext(Context);
   const deviceButtonX = useSharedValue(-60);
   const settingsButtonX = useSharedValue(0);
 
@@ -27,19 +27,19 @@ const NavButtons = () => {
 
   useEffect(() => {
     deviceButtonX.value = withTiming(
-      globalState.isDeviceDrawerOpen || globalState.isSettingsDrawerOpen
+      drawerState.isDeviceDrawerOpen || drawerState.isSettingsDrawerOpen
         ? 100
         : -60,
       {duration: 200},
     );
 
     settingsButtonX.value = withTiming(
-      globalState.isDeviceDrawerOpen || globalState.isSettingsDrawerOpen
+      drawerState.isDeviceDrawerOpen || drawerState.isSettingsDrawerOpen
         ? -100
         : 0,
       {duration: 200},
     );
-  }, [globalState.isDeviceDrawerOpen, globalState.isSettingsDrawerOpen]);
+  }, [drawerState.isDeviceDrawerOpen, drawerState.isSettingsDrawerOpen]);
 
   return (
     <View style={styles.container}>
@@ -47,7 +47,7 @@ const NavButtons = () => {
         <TouchableOpacity
           style={styles.button}
           onPress={() =>
-            setGlobalState({...globalState, isSettingsDrawerOpen: true})
+            setDrawerState({...drawerState, isSettingsDrawerOpen: true})
           }>
           <Icon name="cog" size={30} color="#00c3ff" style={styles.icon} />
         </TouchableOpacity>
@@ -56,7 +56,7 @@ const NavButtons = () => {
         <TouchableOpacity
           style={styles.button}
           onPress={() =>
-            setGlobalState({...globalState, isDeviceDrawerOpen: true})
+            setDrawerState({...drawerState, isDeviceDrawerOpen: true})
           }>
           <Icon
             name="bluetooth"

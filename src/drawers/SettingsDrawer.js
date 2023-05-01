@@ -11,7 +11,7 @@ import Animated, {
 import {Dimensions} from 'react-native';
 
 const SettingsDrawer = () => {
-  const {globalState, setGlobalState} = useContext(Context);
+  const {drawerState, setDrawerState} = useContext(Context);
   const screenWidth = Dimensions.get('window').width;
   const leftDrawerX = useSharedValue(-screenWidth);
 
@@ -23,17 +23,17 @@ const SettingsDrawer = () => {
 
   useEffect(() => {
     leftDrawerX.value = withTiming(
-      globalState.isSettingsDrawerOpen ? 0 : -screenWidth,
+      drawerState.isSettingsDrawerOpen ? 0 : -screenWidth,
       {duration: 200},
     );
-  }, [globalState.isSettingsDrawerOpen]);
+  }, [drawerState.isSettingsDrawerOpen]);
 
   return (
     <Animated.View style={[styles.drawerContainer, animatedStyles]}>
       <TouchableOpacity
         style={styles.overlay}
         onPress={() =>
-          setGlobalState({...globalState, isSettingsDrawerOpen: false})
+          setDrawerState({...drawerState, isSettingsDrawerOpen: false})
         }
       />
       <View style={styles.leftDrawer}>

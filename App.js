@@ -19,7 +19,7 @@ LT Notes:
   */
 
 const App = () => {
-  const [globalState, setGlobalState] = useState({
+  const [drawerState, setDrawerState] = useState({
     isSettingsDrawerOpen: false,
     isDeviceDrawerOpen: false,
   });
@@ -29,26 +29,30 @@ const App = () => {
     connectedDevices: [],
   });
 
-  useEffect(() => {
-    const getBleState = async () => {
-      const state = await bleManager.state();
-      setBtState(state);
-    };
-    getBleState().catch(err => {
-      console.error('Error catching bluetooth state: ', err);
-    });
-  }, []);
+  //to be abstracted 
 
-  bleManager.onStateChange(state => {
-    console.log('State change local : ', state);
-    setBtState(state);
-  });
+  // useEffect(() => {
+  //   const getBleState = async () => {
+  //     const state = await bleManager.state();
+  //     setBtState(state);
+  //   };
+  //   getBleState().catch(err => {
+  //     console.error('Error catching bluetooth state: ', err);
+  //   });
+  // }, []);
+
+  // bleManager.onStateChange(state => {
+  //   console.log('State change local : ', state);
+  //   setBtState(state);
+  // });
 
   return (
     <Context.Provider
       value={{
-        globalState,
-        setGlobalState,
+        drawerState,
+        setDrawerState,
+        btState,
+        setBtState,
       }}>
       <MainScreen />
     </Context.Provider>

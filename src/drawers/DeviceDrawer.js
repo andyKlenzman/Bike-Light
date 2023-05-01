@@ -9,7 +9,7 @@ import Animated, {
 import {Dimensions} from 'react-native';
 import BluetoothMain from '../components/🟣🟣🟣 BluetoothMain';
 const DeviceDrawer = () => {
-  const {globalState, setGlobalState} = useContext(Context);
+  const {drawerState, setDrawerState} = useContext(Context);
   const screenWidth = Dimensions.get('window').width;
   const rightDrawerX = useSharedValue(screenWidth);
 
@@ -21,17 +21,17 @@ const DeviceDrawer = () => {
 
   useEffect(() => {
     rightDrawerX.value = withTiming(
-      globalState.isDeviceDrawerOpen ? 0 : screenWidth,
+      drawerState.isDeviceDrawerOpen ? 0 : screenWidth,
       {duration: 200},
     );
-  }, [globalState.isDeviceDrawerOpen]);
+  }, [drawerState.isDeviceDrawerOpen]);
 
   return (
     <Animated.View style={[styles.drawerContainer, animatedStyles]}>
       <TouchableOpacity
         style={styles.overlay}
         onPress={() =>
-          setGlobalState({...globalState, isDeviceDrawerOpen: false})
+          setDrawerState({...drawerState, isDeviceDrawerOpen: false})
         }
       />
       <View style={styles.rightDrawer}>
