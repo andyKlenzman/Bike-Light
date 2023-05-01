@@ -1,15 +1,17 @@
 import {Text, TouchableOpacity, StyleSheet} from 'react-native';
-
+import {useContext} from 'react';
+import Context from '../../state/Context';
 
 export const renderScannedItem = ({item}) => {
-  let isConnected = connectedDevices.some(device => {
+  const {btState} = useContext(Context);
+  let isConnected = btState.connectedDevices.some(device => {
     return device.deviceID === item.id;
   });
 
-  const backgroundColor = item.id === isLoading ? 'grey' : 'orange';
+  const backgroundColor = item.id === btState.isLoading ? 'grey' : 'blue';
   const color = 'white';
   const connectionStatus =
-    item.id === isLoading
+    item.id === btState.isLoading
       ? 'Loading'
       : isConnected
       ? 'Connected'
@@ -25,7 +27,6 @@ export const renderScannedItem = ({item}) => {
     />
   );
 };
-
 
 export const BluetoothListItem = ({
   item,

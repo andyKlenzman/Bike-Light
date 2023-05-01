@@ -4,7 +4,8 @@ import MainScreen from './src/screens/MainScreen';
 import {bleManager} from './src/utils/Bluetooth/bluetoothManager';
 /** Purpose: Context Setup
 Doing:
- - refactor Drawer context, BT context, to be seperate in the context. 
+ - Bt state into context
+  -- Connected devices and overall BT state to context
 
 To-do:
   - Adding device BT state updates to highest level of the app. 
@@ -27,24 +28,10 @@ const App = () => {
   const [btState, setBtState] = useState({
     isBluetoothOn: false,
     connectedDevices: [],
+    isLoading: ''
   });
 
-  //to be abstracted 
-
-  // useEffect(() => {
-  //   const getBleState = async () => {
-  //     const state = await bleManager.state();
-  //     setBtState(state);
-  //   };
-  //   getBleState().catch(err => {
-  //     console.error('Error catching bluetooth state: ', err);
-  //   });
-  // }, []);
-
-  // bleManager.onStateChange(state => {
-  //   console.log('State change local : ', state);
-  //   setBtState(state);
-  // });
+  
 
   return (
     <Context.Provider

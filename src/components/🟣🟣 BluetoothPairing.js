@@ -1,21 +1,20 @@
-import {
-  Text,
-  View,
-  Button,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-} from 'react-native';
+import {Text, View, Button, StyleSheet, FlatList} from 'react-native';
 import {useState, useEffect, useContext} from 'react';
 import Context from '../state/Context';
-// import {bleManager} from '../utils/bluetooth/bluetoothManger';
 import EmptyList from '../utils/EmptyList';
 import {bleManager} from '../utils/Bluetooth/bluetoothManager';
-import {BluetoothListItem, renderScannedItem} from './🟣 BluetoothListItem';
+import {renderScannedItem} from './🟣 BluetoothListItem';
+import parseCharacteristics from '../utils/Bluetooth/parseCharacteristics';
 /*
   Purpose: User flow and mechanics for BT device connection. Can handle multiple devices. 
 
+
+Check: 
+  - Does characteristic parsing work?
+  - does renderScannedItem work?
+  - Check if connectedDevices is working in the context.
 Doing:
+  - Use Context to handle conntected devices
 
 To-do:
   - Style bluetooth paring process
@@ -24,9 +23,9 @@ To-do:
   - Test BT Functionality (with set interval) (will performance lag if readSensors is called twice in app, better to try to load it into context again now that I know it needs the whole obj)
 
 ST NOTES:
-  - How am I going to strcuture this? I am going to be using the BT state, etc, for a lot of things besides pairing. I'm going to use it to hit the user on the head with shit. Maybe the BT state for example, could be called at the beginning of the app, then use that to show a message, or read the length of connected devices to make the bluetooth button flashing to get someone started. 
+  - So ill need connected devices in context regardless, so mise well put isLoading in their as well so I can abstract out rendered items. Am I violating having two different sources of truth? 
 LT Notes:
-  - I can abstract renderSCannwedItems when I've got the connected items into the context
+  - Could try to abstract all of this, to keep the UI nice and clean. 
   - 
   */
 
@@ -41,36 +40,16 @@ LT Notes:
 // }, []);
 
 const BluetoothPairing = () => {
-  //load in the context here
-  const {globalState, setGlobalState} = useContext(Context);
-
-
-  const [btState, setBtState] = useState();
+  const {btState, setBtState} = useContext(Context);
   const [scannedDevices, setScannedDevices] = useState([]);
-  const [connectedDevices, setConnectedDevices] = useState([]);
-  const [isLoading, setIsLoading] = useState('');
   const Buffer = require('buffer').Buffer;
 
-  // Checks if the device's Bluetooth is enabled
-  useEffect(() => {
-    const getBleState = async () => {
-      const state = await bleManager.state();
-      setBtState(state);
-    };
-    getBleState().catch(err => {
-      console.error('Error catching bluetooth state: ', err);
-    });
-  }, []);
+  /*
+   * Scans for connectable and unique bluetooth devices and stores them in an array of objects
+   */
 
-  // Subscribes to updates in the device's Bluetooth state
-  bleManager.onStateChange(state => {
-    console.log('State change local : ', state);
-    setBtState(state);
-  });
-
-  // Scans for connectable and unique bluetooth devices and collects them in an array of objects
   const startDeviceScan = async () => {
-    //clearing device array to prevent items listed that are not longer scannable
+    // clear the updatedScannedDevice array to prevent items listed that are no longer scannable
     let updatedScannedDevices = [];
     bleManager.startDeviceScan(null, null, (error, discoveredDevice) => {
       if (error) {
@@ -85,7 +64,6 @@ const BluetoothPairing = () => {
           });
         }
         if (!isDuplicate) {
-          // create a new array with the updated data
           updatedScannedDevices = [...updatedScannedDevices, discoveredDevice];
           setScannedDevices(updatedScannedDevices);
         }
@@ -96,48 +74,46 @@ const BluetoothPairing = () => {
     }, 3000);
   };
 
-  // Connects to device, manages UI's load state, sets the Bluetooth's characterisitcs, and sets up a listener for disconnect.
+  /*
+   * Connects to a device and retrieves the writable characteristic
+   */
   const connectToDevice = async device => {
     console.log(`Connecting to ${device.name ? device.name : device.id}`);
     try {
-      // Step 1 - Set loading state
-      setIsLoading(device.id);
+      // Step 1 - Set loading state and request device data
+      setBtState({...btState, isLoading: device.id});
       const deviceData = await bleManager.connectToDevice(device.id);
 
-      // Step 2 - Connect to device and retrieve writable characteristic
+      // Step 2 - Connect to device and retrieve writable characteristic, parse writeWithoutResponseCharacterisitc
       await bleManager.discoverAllServicesAndCharacteristicsForDevice(
         deviceData.id,
       );
-      const services = await deviceData.services();
-      const service = services[0];
-      const characteristicData = await deviceData.characteristicsForService(
-        service.uuid.toString(),
-      );
-      const writeWithoutResponseCharacterisitc = characteristicData[1];
+      const writeWithoutResponseCharacterisitc =
+        parseCharacteristics(deviceData);
 
       // Step 3 - Check if the device is already connected.
-      let updatedConnectedDevices = connectedDevices;
+      let updatedConnectedDevices = btState.connectedDevices;
       let isDuplicate = updatedConnectedDevices.some(connectedDevice => {
         return connectedDevice.deviceID === device.id;
       });
 
-      // Step 4 - If the device is unique, add it to the array of connected devices.
+      // Step 4 - If the device is unique, add it's characteristics to the array of connected devices.
       if (!isDuplicate) {
         updatedConnectedDevices = [
           ...updatedConnectedDevices,
           writeWithoutResponseCharacterisitc,
         ];
 
-        //Step 5 - If the device disconnects, remove them from the list and sort connected to top of array of devices.
+        //Step 5 - Set up a listener, so if the device disconnects, remove it from connectedDevices and sort connected to top of array of devices.
         bleManager.onDeviceDisconnected(device.id, () => {
-          updatedConnectedDevices = connectedDevices;
+          updatedConnectedDevices = btState.connectedDevices;
           updatedConnectedDevices.filter((connectedDevice, index, arr) => {
             if (connectedDevice.deviceID === device.id) {
               arr.splice(index, 1);
               return true;
             }
           });
-          setConnectedDevices(updatedConnectedDevices);
+          setBtState({...btState, connectedDevices: updatedConnectedDevices});
           sortedScannedDevices.sort(sortingFunction);
         });
 
@@ -171,41 +147,16 @@ const BluetoothPairing = () => {
         //uhhh I never set the state....why is a different reference changing the state val
         sortedScannedDevices.sort(sortingFunction);
 
-        setConnectedDevices(updatedConnectedDevices);
+        setBtState({...btState, connectedDevices: updatedConnectedDevices});
         console.log('connectedDevices', updatedConnectedDevices);
       }
-      setIsLoading('');
+      setBtState({...btState, isLoading: ''});
 
       //Ste0 5 - update Loading state
     } catch (e) {
-      setIsLoading('');
+      setBtState({...btState, isLoading: ''});
       console.log('Connection error: ', e);
     }
-  };
-
-  const renderScannedItem = ({item}) => {
-    let isConnected = connectedDevices.some(device => {
-      return device.deviceID === item.id;
-    });
-
-    const backgroundColor = item.id === isLoading ? 'grey' : 'orange';
-    const color = 'white';
-    const connectionStatus =
-      item.id === isLoading
-        ? 'Loading'
-        : isConnected
-        ? 'Connected'
-        : 'Not Connected';
-
-    return (
-      <BluetoothListItem
-        item={item}
-        connectionStatus={connectionStatus}
-        onPress={() => connectToDevice(item)}
-        backgroundColor={backgroundColor}
-        textColor={color}
-      />
-    );
   };
 
   const writeToDevice = async (characteristic, data) => {
@@ -216,26 +167,26 @@ const BluetoothPairing = () => {
 
   return (
     <View>
-      {btState !== 'PoweredOn' && (
+      {btState.isBluetoothOn !== 'PoweredOn' && (
         <View>
           <Text>Turn on Bluetooth</Text>
         </View>
       )}
 
-      {btState === 'PoweredOn' && (
+      {btState.isBluetoothOn === 'PoweredOn' && (
         <View>
           <Button title="Scan for Lights" onPress={() => startDeviceScan()} />
           <Button
             title="Send Data"
             style={styles.button}
             onPress={() =>
-              writeToDevice(connectedDevices[0], 'somefuckingData  432')
+              writeToDevice(btState.connectedDevices[0], 'somefuckingData  432')
             }
           />
 
           <FlatList
             data={Object.values(scannedDevices)}
-            extraData={[scannedDevices, isLoading]}
+            extraData={[scannedDevices, btState]}
             keyExtractor={item => item.id}
             renderItem={renderScannedItem}
             ListEmptyComponent={EmptyList}
@@ -261,3 +212,28 @@ const styles = StyleSheet.create({
 });
 
 export default BluetoothPairing;
+
+// const renderScannedItem = ({item}) => {
+//   let isConnected = connectedDevices.some(device => {
+//     return device.deviceID === item.id;
+//   });
+
+//   const backgroundColor = item.id === isLoading ? 'transparent' : 'grey';
+//   const color = 'white';
+//   const connectionStatus =
+//     item.id === btState.isLoading
+//       ? 'Loading'
+//       : isConnected
+//       ? 'Connected'
+//       : 'Not Connected';
+
+//   return (
+//     <BluetoothListItem
+//       item={item}
+//       connectionStatus={connectionStatus}
+//       onPress={() => connectToDevice(item)}
+//       backgroundColor={backgroundColor}
+//       textColor={color}
+//     />
+//   );
+// };

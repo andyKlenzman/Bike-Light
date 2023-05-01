@@ -3,7 +3,7 @@ import NavButtons from '../components/🟣🟣🟣 NavButtons';
 import SettingsDrawer from '../drawers/SettingsDrawer';
 import DeviceDrawer from '../drawers/DeviceDrawer';
 import ReanimatedPractice from '../components/🟣🟣🟣 ReanimatedPractice';
-
+import bluetoothListener from '../utils/Bluetooth/bluetoothListener';
 /*
 Check: 
 
@@ -18,6 +18,8 @@ ST NOTES:
   */
 
 const MainScreen = () => {
+
+  bluetoothListener();
 
 
   return (
