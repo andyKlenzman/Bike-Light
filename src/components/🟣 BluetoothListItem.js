@@ -1,9 +1,9 @@
 import {Text, TouchableOpacity, StyleSheet} from 'react-native';
-import {useContext} from 'react';
-import Context from '../../state/Context';
+import { connectToDevice } from '../utils/Bluetooth/connectToDevice';
 
-export const renderScannedItem = ({item}) => {
-  const {btState} = useContext(Context);
+
+export const RenderScannedItem = ({item, btState, setBtState}) => {
+
   let isConnected = btState.connectedDevices.some(device => {
     return device.deviceID === item.id;
   });
@@ -21,7 +21,7 @@ export const renderScannedItem = ({item}) => {
     <BluetoothListItem
       item={item}
       connectionStatus={connectionStatus}
-      onPress={() => connectToDevice(item)}
+      onPress={() => connectToDevice(item, btState, setBtState)}
       backgroundColor={backgroundColor}
       textColor={color}
     />

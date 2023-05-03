@@ -28,7 +28,8 @@ const App = () => {
   const [btState, setBtState] = useState({
     isBluetoothOn: false,
     connectedDevices: [],
-    isLoading: ''
+    isLoading: '',
+    scannedDevices: []
   });
 
   
