@@ -4,13 +4,10 @@ import MainScreen from './src/screens/MainScreen';
 import {bleManager} from './src/utils/Bluetooth/bluetoothManager';
 /** Purpose: Context Setup
 Doing:
- - Bt state into context
-  -- Connected devices and overall BT state to context
+ -
 
 To-do:
-  - Adding device BT state updates to highest level of the app. 
-  - refactor BTpairing to read context for global state.
-  --- May redesign Global state to have muleiple portions: Drawer state, BT state, etc.
+  -
   
 ST NOTES:
  - 

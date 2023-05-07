@@ -6,19 +6,16 @@ import {sortConnectedDevicesFirst} from './sortConnectedDevicesFirst';
 Connect to BT device, update state.
 
 Doing:
-  - Ensure connectedDevices state updates when a device connects or disconnects
+  - 
 
 Check: 
-  - Ensure that the render item says connected
-  - See if sorting function works once able to connect to devices
+  - 
 
 To-do:
-  - How does BT connection work while interacting with the UI 
-  - Find out why global BT state did not update until a manual rerender
-  - Add a timeout to the connection process
-
+  - Fix update to global BT state. (distinguis functions in context??? use as opporunity to learn about state and contextr 
+    )
 ST NOTES:
-  - updated Connected devices is blank, even though we already added wims, need to figure that out. 
+
 
 LT Notes:
   - 
@@ -44,11 +41,7 @@ export const connectToDevice = async (device, btState, setBtState) => {
 
     // Check if the device is already connected.
     let updatedConnectedDevices = btState.connectedDevices;
-    console.log(
-      'updatedConnectedDevices before checking if it is a duplicate: ',
-      updatedConnectedDevices,
-    );
-    console.log('device being connected to: ', device.id);
+    
     let isDuplicate = updatedConnectedDevices.some(connectedDevice => {
       return connectedDevice.deviceID === device.id;
     });
@@ -65,14 +58,9 @@ export const connectToDevice = async (device, btState, setBtState) => {
       sortedScannedDevices.sort(
         sortConnectedDevicesFirst(updatedConnectedDevices),
       );
-      setBtState({...btState, connectedDevices: updatedConnectedDevices});
-      console.log(
-        'connectedDevices',
-        updatedConnectedDevices,
-        btState.connectedDevices,
-      );
+     
 
-      //Step 6 - Set up a listener, so if the device disconnects, remove it from connectedDevices and sort connected to top of array of devices.
+      // Set up a listener, so if the device disconnects, remove it from connectedDevices and sort connected to top of array of devices.
 
       bleManager.onDeviceDisconnected(device.id, () => {
         updatedConnectedDevices = btState.connectedDevices;
@@ -88,7 +76,7 @@ export const connectToDevice = async (device, btState, setBtState) => {
         );
       });
     }
-    setBtState({...btState, isLoading: ''});
+    setBtState({...btState, connectedDevices: updatedConnectedDevices, isLoading: ''});
   } catch (e) {
     setBtState({...btState, isLoading: ''});
     console.log('Connection error: ', e);

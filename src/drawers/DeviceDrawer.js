@@ -35,7 +35,6 @@ const DeviceDrawer = () => {
         }
       />
       <View style={styles.rightDrawer}>
-        <Text style={styles.content}>Device Content</Text>
         <BluetoothMain />
       </View>
     </Animated.View>
@@ -63,7 +62,7 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     right: 0,
-    width: '50%',
+    width: '75%',
     backgroundColor: 'rgba(0,0,0,0.8)',
     alignItems: 'center',
     justifyContent: 'center',

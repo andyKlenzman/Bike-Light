@@ -2,7 +2,7 @@ import {View, Text, StyleSheet} from 'react-native';
 const EmptyList = () => {
   return (
     <View>
-      <Text style={styles.item}>No data found</Text>
+      <Text style={styles.item}>No devices found</Text>
     </View>
   );
 };
