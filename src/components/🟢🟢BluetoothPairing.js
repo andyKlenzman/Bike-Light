@@ -1,22 +1,19 @@
-import {Text, View, Button, StyleSheet, FlatList} from 'react-native';
+import {View,  StyleSheet} from 'react-native';
 import {useContext} from 'react';
 import Context from '../state/Context';
-import BluetoothDisabledScreen from './BluetoothDisabledScreen';
-import {BluetoothEnabledScreen} from './BluetoothEnabledScreen';
+import BluetoothDisabledScreen from './🟢🟢BluetoothDisabledScreen';
+import {BluetoothEnabledScreen} from './🟢🟢BluetoothEnabledScreen';
 /*
   User flow and mechanics for BT device connection. Can handle multiple devices. 
 
 Doing:
-  - Style BT UI
-
+ - Develop Signal Communications
 Check: 
 
 To-do:
   - Add a timeout to connecting to BT device.
   - Address performance issues with updating global bt state.
-
-  - Develop Signal Communications
-
+ 
 ST NOTES:
 
 LT Notes:
@@ -26,7 +23,7 @@ LT Notes:
 
 const BluetoothPairing = () => {
   const {btState} = useContext(Context);
-  const Buffer = require('buffer').Buffer;
+  
 
   return (
     <View>

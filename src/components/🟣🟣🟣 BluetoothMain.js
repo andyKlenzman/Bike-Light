@@ -1,6 +1,6 @@
-import {Text, View} from 'react-native';
+import {View} from 'react-native';
 
-import BluetoothPairing from './🟣🟣 BluetoothPairing';
+import BluetoothPairing from './🟢🟢BluetoothPairing';
 
 /*
     Flow for BT device setup. Can handle multiple devices. 

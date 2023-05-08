@@ -1,18 +1,10 @@
-import {
-  Text,
-  View,
-  Button,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-} from 'react-native';
+import {Text, View, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
 import {useContext} from 'react';
 import Context from '../state/Context';
 import EmptyList from '../utils/EmptyList';
-import {RenderScannedItem} from './🟣 BluetoothListItem';
+import {RenderScannedItem} from './🟡 BluetoothListItem';
 import {startDeviceScan} from '../utils/Bluetooth/startDeviceScan';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import BluetoothDisabledScreen from './BluetoothDisabledScreen';
+
 export const BluetoothEnabledScreen = () => {
   const {btState, setBtState} = useContext(Context);
   const Buffer = require('buffer').Buffer;

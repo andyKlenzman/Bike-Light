@@ -8,28 +8,11 @@ import Animated, {
 } from 'react-native-reanimated';
 import readSensors from '../utils/Sensors';
 
-/** Purpose: Animation
+/* 
+  Presents sensor Animation
+*/
 
-Doing:
-  - I
-
-To-do:
-  - 
-  
-ST NOTES:
- - 
-
-
-LT Notes:
- - Some notes from fluid sumulation
- - One motuon, mouse listesnder, Phone movement. Could add gesture handler
- - live pointer data object 
- - emergent behavior!!!!!
-
- - 
-  */
-
-const ReanimatedPractice = () => {
+const Animation = () => {
   const {
     RotationSensor,
     AccelerometerSensor,
@@ -37,6 +20,7 @@ const ReanimatedPractice = () => {
     GravitySensor,
     MagneticSensor,
   } = readSensors();
+  
 
   const style = useAnimatedStyle(() => {
     const yaw = Math.abs(RotationSensor.sensor.value.yaw);
@@ -121,7 +105,7 @@ const ReanimatedPractice = () => {
   );
 };
 
-export default ReanimatedPractice;
+export default Animation;
 
 const styles = StyleSheet.create({
   container: {

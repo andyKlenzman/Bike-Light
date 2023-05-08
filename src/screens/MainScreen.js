@@ -2,7 +2,7 @@ import {StyleSheet, View} from 'react-native';
 import NavButtons from '../components/🟣🟣🟣 NavButtons';
 import SettingsDrawer from '../drawers/SettingsDrawer';
 import DeviceDrawer from '../drawers/DeviceDrawer';
-import ReanimatedPractice from '../components/🟣🟣🟣 ReanimatedPractice';
+import ReanimatedPractice from '../components/🟣🟣🟣 Animation';
 import {useContext, useEffect} from 'react';
 import Context from '../state/Context';
 import {bleManager} from '../utils/Bluetooth/bluetoothManager';
@@ -15,14 +15,13 @@ Doing:
 
 To-do:
 - arcitecture for sending signals to BT device, keeping in mind mult devices, settings mode, animations w sneosrs, etc`
-
+- get rid of scan button for BT
 ST NOTES:
 
   */
 
 const MainScreen = () => {
   const {btState, setBtState} = useContext(Context);
-
   useEffect(() => {
     const getBleState = async () => {
       const state = await bleManager.state();

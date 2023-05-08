@@ -4,9 +4,7 @@ import Context from '../state/Context';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
-  withSpring,
   withTiming,
-  withDecay,
 } from 'react-native-reanimated';
 import {Dimensions} from 'react-native';
 
