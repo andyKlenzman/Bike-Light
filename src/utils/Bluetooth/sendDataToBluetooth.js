@@ -19,5 +19,11 @@ export const sendDataToBluetooth = async (data, device) => {
   );
 
   console.log('data sent');
-  console.log(data);
+  console.log(
+    data,
+    device.id,
+    device.serviceUUID,
+    device.characteristicUUID,
+    buffer,
+  );
 };

@@ -7,6 +7,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import {Dimensions} from 'react-native';
+import SettingsMain from '../components/🟣🟣🟣SettingsMain';
 
 const SettingsDrawer = () => {
   const {drawerState, setDrawerState} = useContext(Context);
@@ -35,7 +36,7 @@ const SettingsDrawer = () => {
         }
       />
       <View style={styles.leftDrawer}>
-        <Text style={styles.content}>Settings Content</Text>
+        <SettingsMain />
       </View>
     </Animated.View>
   );

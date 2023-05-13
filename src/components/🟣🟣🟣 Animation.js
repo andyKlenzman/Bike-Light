@@ -127,7 +127,6 @@ const styles = StyleSheet.create({
   animation: {
     position: 'absolute',
   },
-  //make an animation container that holds text and animation in the center
   animatedContainer: {
     justifyContent: 'center',
     alignItems: 'center',

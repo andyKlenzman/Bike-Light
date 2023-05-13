@@ -35,7 +35,6 @@ export const BluetoothEnabledScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  // styles for a button to enable scanning that fit with our navButtons
   button: {
     backgroundColor: 'black',
     width: 60,
