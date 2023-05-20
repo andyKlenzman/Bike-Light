@@ -1,21 +1,21 @@
-
-
 Doing:
-- Make sure characterID is available in connected obj
-- make sure buffer data is in the right format
+- Make sure characteristic data is being loaded into sendData function correctly
 
 To-do:
+- make sure buffer data is in the right format
 - Sending Data
   - what if user has not connected to device
   - how will we handle multi device comms
 
-
 ST NOTES:
-- Weird bug, sloppy code, glad i stepped up tho and did it. Keep pressing. 
+
+- Debuggers are nice. Damn, humbled that we got through that. 
+- https://stackoverflow.com/questions/62937553/no-apps-connected-sending-reload-to-all-react-native-apps-failed-make-sure-y
 
 Approach:
+
 - Build the simplest thing possible and evolve from there, cant predict the architecture yet
 
-
 LT Notes:
- - 
+
+- I disabled hermes in the podfile

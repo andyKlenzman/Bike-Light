@@ -3,31 +3,23 @@
 */
 
 export const extractWriteCharacteristic = async deviceData => {
-  const services = await deviceData.services();
-  const service = services[0];
-  const charData = await deviceData.characteristicsForService(
-    service.uuid.toString(),
-  );
-  const writeWithResponseChar = charData[1];
-  console.log('CHARACTERISTIC DATA: ', writeWithResponseChar);
-  return writeWithResponseChar;
+  try {
+    const services = await deviceData.services();
+    //microcontroller only returns one service. Do other types of bluetooth return more? 
+    const service = services[0];
+
+    const charArray = await deviceData.characteristicsForService(
+      service.uuid.toString(),
+    );
+
+    //find the array with a propery with the key that says isWritableWithResponse: true
+    const writeWithResponseChar =
+      charArray.find(obj => obj.isWritableWithResponse === true) || null;
+    if (!writeWithResponseChar) throw new Error('Service not found');
+    return writeWithResponseChar;
+  } catch (error) {
+    console.error('Error extracting write characteristic:', error);
+    //throws the error to the caller
+    return null;
+  }
 };
-
-
-// export const extractWriteCharacteristic = async deviceData => {
-//   try {
-//     const services = await deviceData.services();
-//     const service = services.find(s => s.uuid.toString() === 'YOUR_SERVICE_UUID');
-//     if (!service) throw new Error('Service not found');
-
-//     const charData = await deviceData.characteristicsForService(service.uuid.toString());
-//     const writeWithResponseChar = charData.find(c => c.uuid.toString() === 'YOUR_WRITE_CHAR_UUID');
-//     if (!writeWithResponseChar) throw new Error('Write characteristic not found');
-
-//     console.log('CHARACTERISTIC DATA: ', writeWithResponseChar);
-//     return writeWithResponseChar;
-//   } catch (error) {
-//     console.error('Error extracting write characteristic:', error);
-//     throw error;
-//   }
-// };

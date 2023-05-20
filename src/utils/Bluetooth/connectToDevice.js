@@ -13,14 +13,22 @@ export const connectToDevice = async (device, btState, setBtState) => {
     setBtState({...btState, isLoading: device.id});
 
     //  Connect to device and return device data
-    const deviceData = await bleManager.connectToDevice(device.id);
+    // const deviceData = await bleManager.connectToDevice(device.id);
+    const deviceDataPromise = bleManager.connectToDevice(device.id);
+
+    const deviceData = await Promise.race([
+      deviceDataPromise,
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Connection timeout')), 10000),
+      ),
+    ]);
 
     // Extract writeWithoutResponseCharacteristic
     await bleManager.discoverAllServicesAndCharacteristicsForDevice(
       deviceData.id,
     );
     const writeCharacteristic = await extractWriteCharacteristic(deviceData);
-
+    if (!writeCharacteristic) throw new Error('Service not found');
     // Check if the device is already connected.
     let updatedConnectedDevices = btState.connectedDevices;
 
