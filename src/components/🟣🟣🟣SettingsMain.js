@@ -3,23 +3,47 @@ import {
   startBluetoothCommunication,
   stopBluetoothCommunication,
 } from '../utils/Bluetooth/startBluetoothCommunication';
-import {useContext} from 'react';
+import {useContext, useState} from 'react';
 import Context from '../state/Context';
+import readSensors from '../utils/Sensors';
+
 const SettingsMain = () => {
   const {btState} = useContext(Context);
-
+  const [isSendingSignals, setIsSendingSignals] = useState(false);
+  const {
+    RotationSensor,
+    AccelerometerSensor,
+    GyroscopeSensor,
+    GravitySensor,
+    MagneticSensor,
+  } = readSensors();
+  // passing isSendingSignals state to communication functions, so can cleanup the formatting of the button if there is an error
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={async () =>
-          await startBluetoothCommunication(btState.connectedDevices)
-        }>
-        <Text style={styles.buttonText}>Send</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => stopBluetoothCommunication()}>
-        <Text style={styles.buttonText}>Stop</Text>
-      </TouchableOpacity>
+      {isSendingSignals ? (
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => stopBluetoothCommunication(setIsSendingSignals)}>
+          <Text style={styles.buttonText}>Stop</Text>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          style={styles.button}
+          onPress={async () => {
+            await startBluetoothCommunication(
+              btState.connectedDevices,
+              setIsSendingSignals,
+              isSendingSignals,
+              RotationSensor,
+              AccelerometerSensor,
+              GyroscopeSensor,
+              GravitySensor,
+              MagneticSensor,
+            );
+          }}>
+          <Text style={styles.buttonText}>Send</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

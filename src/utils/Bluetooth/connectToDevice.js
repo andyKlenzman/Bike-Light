@@ -12,9 +12,9 @@ export const connectToDevice = async (device, btState, setBtState) => {
     // Set loading state
     setBtState({...btState, isLoading: device.id});
 
-    //  Connect to device and return device data
-    // const deviceData = await bleManager.connectToDevice(device.id);
+    //  Connect to device and return device data, or return an error after timeout
     const deviceDataPromise = bleManager.connectToDevice(device.id);
+
 
     const deviceData = await Promise.race([
       deviceDataPromise,

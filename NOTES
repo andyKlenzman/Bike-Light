@@ -1,21 +1,32 @@
 Doing:
-- Make sure characteristic data is being loaded into sendData function correctly
+
+- Sync BT and microcontroller
+  -- try a while loop
+    -- works better, but still not stopping or there is a million unfillfilled promises, will have to figure that out. Also, still blinking. 
+    -- may still need the interval to set pace. Got to figure out what to do with blocking functions.
+  -- Test data being and sent and recieved rate side by side
+  -- Could the buffer be stagnating it??
 
 To-do:
-- make sure buffer data is in the right format
-- Sending Data
-  - what if user has not connected to device
-  - how will we handle multi device comms
 
+- Figure out why data keeps being sent after the setInterval has been stopped
+- Need a way to cache bluetooth data and to run in background / keep screen awake
+- Performance bugs (there are lots of them)
+  -- global BT
+  -- 
+- test response from microcontroller
+- error handling for disconnect 
+- format sensor data
+ -- check transformData function/map round number
 ST NOTES:
+- Will make data transofmration function more flexible, just need to start right now with a basic arcitecture. Making choices that dont serve me know in terms of design, but that include things that I know Ill need, sicj as a specific function for mapping and a function for configuring how data is being transformed for the microcontorller
 
-- Debuggers are nice. Damn, humbled that we got through that. 
-- https://stackoverflow.com/questions/62937553/no-apps-connected-sending-reload-to-all-react-native-apps-failed-make-sure-y
-
-Approach:
-
-- Build the simplest thing possible and evolve from there, cant predict the architecture yet
+  Approach:
 
 LT Notes:
-
-- I disabled hermes in the podfile
+- This is just like painting, finding the ofrm that works from nothing
+- There will be the problem of distonguishing what data set is coming from what sensor. Could it be based on an order? 
+- bluetooth setup (can i add connected devices to the list? What to do when someone is connected to a device but not through the app?? Hit them in the head)
+- multi device communication
+- Build the simplest thing possible and evolve from there, cant predict the architecture yet
+- OGTPY hooks are only able to be called at the lowest level. Is it for design reasons technical limitations does it in force a certain pattern that is beneficial in app development.
