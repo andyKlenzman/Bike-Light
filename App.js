@@ -1,7 +1,6 @@
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import Context from './src/state/Context';
 import MainScreen from './src/screens/MainScreen';
-
 
 const App = () => {
   const [drawerState, setDrawerState] = useState({
@@ -15,6 +14,8 @@ const App = () => {
     isLoading: '',
     scannedDevices: [],
   });
+
+  
 
   return (
     <Context.Provider

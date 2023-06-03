@@ -1,6 +1,6 @@
 import {Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {connectToDevice} from '../utils/Bluetooth/connectToDevice';
-
+import {disconnectFromDevice} from '../utils/Bluetooth/disconnectFromDevice';
 export const RenderScannedItem = ({item, btState, setBtState}) => {
   let isConnected = btState.connectedDevices.some(device => {
     return device.deviceID === item.id;
@@ -19,7 +19,15 @@ export const RenderScannedItem = ({item, btState, setBtState}) => {
     <BluetoothListItem
       item={item}
       connectionStatus={connectionStatus}
-      onPress={() => connectToDevice(item, btState, setBtState)}
+      onPress={() => {
+        if (connectionStatus === 'Connected') {
+          disconnectFromDevice(item, btState, setBtState);
+        } else if (connectionStatus === 'Not Connected') {
+          connectToDevice(item, btState, setBtState);
+        } else if (connectionStatus === 'Loading') {
+          console.log('be patient');
+        }
+      }}
       backgroundColor={backgroundColor}
       textColor={color}
     />
@@ -33,8 +41,13 @@ export const BluetoothListItem = ({
   backgroundColor,
   textColor,
 }) => (
-  <TouchableOpacity onPress={onPress} activeOpacity={0.5} style={[styles.item, {backgroundColor}]}>
-    <Text numberOfLines={1} ellipsizeMode='tail' style={styles.title}>{item.name ? item.name : item.id}</Text>
+  <TouchableOpacity
+    onPress={onPress}
+    activeOpacity={0.5}
+    style={[styles.item, {backgroundColor}]}>
+    <Text numberOfLines={1} ellipsizeMode="tail" style={styles.title}>
+      {item.name ? item.name : item.id}
+    </Text>
     <Text style={styles.subtitle}>{connectionStatus}</Text>
   </TouchableOpacity>
 );
@@ -43,7 +56,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 50,
     flex: 1,
-    backgroundColor: '#1B1B1B'
+    backgroundColor: '#1B1B1B',
   },
   title: {
     fontSize: 24,

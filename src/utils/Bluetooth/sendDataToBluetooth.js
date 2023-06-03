@@ -13,11 +13,11 @@ export const sendDataToBluetooth = async (data, device) => {
       );
     if (!data)
       throw new Error('No motion data found. Restart app and try again');
-
-    const base64Data = encode(data.rotX);
+    const jsonString = JSON.stringify(data)
+    const base64Data = encode(jsonString);
     const response = await device.writeWithResponse(base64Data);
-    console.log('SENT   ', data.rotX);
+    // console.log('SENT   ', data.rotX);
   } catch (error) {
-    console.error('Error in sendDataToBluetooth', error);
+    throw error;
   }
 };

@@ -1,32 +1,67 @@
 Doing:
+  - refactor for redux. 
+  - understanding bluetooth. 
 
-- Sync BT and microcontroller
-  -- try a while loop
-    -- works better, but still not stopping or there is a million unfillfilled promises, will have to figure that out. Also, still blinking. 
-    -- may still need the interval to set pace. Got to figure out what to do with blocking functions.
-  -- Test data being and sent and recieved rate side by side
-  -- Could the buffer be stagnating it??
+Next up: disconnectFromDevice (will force my state to be clean)
+-- caching data
+  - Understanding how to have data persist
+  - understand when the device will disonccect 
+    -- If the device goes into background mode, if it shuts off, if the app is closed what happens? 
+      --- feeling here is that
+      --- dont have a full understanding of background mode and how long connection will persist
+    -- best course of action is to remove async storage and test and document the behavior
+
+
+Bluetooth Overhaul
+-- user flow
+
+
+-- need more sophistication once connecting to multiple devices
+-- filtering unneeded devices
+-- voluntary disconnect from phone
+-- automatic scanning (possibly pairing too)
+-- global bluetooth state perforamnce
+-- Why does button need to be pressed twice when device is connected, need to revisit connectToDevice.js
+-- copy app given by jiro
 
 To-do:
 
-- Figure out why data keeps being sent after the setInterval has been stopped
-- Need a way to cache bluetooth data and to run in background / keep screen awake
-- Performance bugs (there are lots of them)
-  -- global BT
-  -- 
-- test response from microcontroller
-- error handling for disconnect 
-- format sensor data
- -- check transformData function/map round number
-ST NOTES:
-- Will make data transofmration function more flexible, just need to start right now with a basic arcitecture. Making choices that dont serve me know in terms of design, but that include things that I know Ill need, sicj as a specific function for mapping and a function for configuring how data is being transformed for the microcontorller
+- New features
+  -- file saving
+  -- file sharing
+  -- smoothing functions
+  -- Send various types of data
+  --- map and round number not working
+  -- modes
+  -- animation
+  -- multi-device connect
+  -- "hit the user on the head" UI Features
 
-  Approach:
+  - start/stop/save button
+  - when BT is off globally
+  - when no device is connected
+  - when device is connected
+  - when data is streaming
+  - when phone loses connections
+  - use blinking and pin modals to communicate
+
+- Testing implemented features
+  -- BT connect and displaying correct state (connected, loading, etc.) Sometimes needs to be pressed again.
+  -- caching data
+  -- background mode
+  -- bluetooth
+
+- Performance Improvements
+  -- global BT state
+- Error hnadling
+  -- when phone BT turns off
+
+- Microcontroller
+  -- When phone disconnects
+  -- Parsing data
+  --
+
+ST NOTES:
+- I am running into state problems. This is why I need to use redux. I am tryuing to store data and keep app state consistent at the same time. 
 
 LT Notes:
-- This is just like painting, finding the ofrm that works from nothing
-- There will be the problem of distonguishing what data set is coming from what sensor. Could it be based on an order? 
-- bluetooth setup (can i add connected devices to the list? What to do when someone is connected to a device but not through the app?? Hit them in the head)
-- multi device communication
-- Build the simplest thing possible and evolve from there, cant predict the architecture yet
-- OGTPY hooks are only able to be called at the lowest level. Is it for design reasons technical limitations does it in force a certain pattern that is beneficial in app development.

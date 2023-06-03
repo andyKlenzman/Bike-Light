@@ -6,6 +6,7 @@ import ReanimatedPractice from '../components/🟣🟣🟣 Animation';
 import {useContext, useEffect} from 'react';
 import Context from '../state/Context';
 import {bleManager} from '../utils/Bluetooth/bluetoothManager';
+import {loadData} from '../utils/AsyncStorage/loadData';
 /*
 Check: 
 
@@ -23,14 +24,20 @@ ST NOTES:
 const MainScreen = () => {
   const {btState, setBtState} = useContext(Context);
   useEffect(() => {
-    const getBleState = async () => {
+    const getBleStateAndLoadData = async () => {
       const state = await bleManager.state();
-      setBtState({...btState, isBluetoothOn: state});
+      const savedData = await loadData('connectedDevices');
+      setBtState({
+        ...btState,
+        isBluetoothOn: state,
+        connectedDevices: savedData,
+      });
     };
-    getBleState().catch(err => {
+    getBleStateAndLoadData().catch(err => {
       console.error('Error catching bluetooth state: ', err);
     });
   }, []);
+
   bleManager.onStateChange(state => {
     setBtState({...btState, isBluetoothOn: state});
   });

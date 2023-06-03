@@ -1,7 +1,8 @@
 import {bleManager} from './bluetoothManager';
 import {extractWriteCharacteristic} from './extractWriteCharacteristic';
 import {sortConnectedDevicesFirst} from './sortConnectedDevicesFirst';
-
+import {saveData} from '../AsyncStorage/saveData';
+import {removeData} from '../AsyncStorage/removeData';
 /*
 Connect to BT device, sorts array so connected are at top, filters duplicates, handles UI state changes, and loads BT device data to state.
 */
@@ -14,14 +15,14 @@ export const connectToDevice = async (device, btState, setBtState) => {
 
     //  Connect to device and return device data, or return an error after timeout
     const deviceDataPromise = bleManager.connectToDevice(device.id);
-
-
+    
     const deviceData = await Promise.race([
       deviceDataPromise,
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Connection timeout')), 10000),
       ),
     ]);
+    
 
     // Extract writeWithoutResponseCharacteristic
     await bleManager.discoverAllServicesAndCharacteristicsForDevice(
@@ -50,20 +51,27 @@ export const connectToDevice = async (device, btState, setBtState) => {
       );
 
       // Set up a listener, so if the device disconnects, remove it from connectedDevices and sort connected to top of array of devices.
-      bleManager.onDeviceDisconnected(device.id, () => {
-        updatedConnectedDevices = btState.connectedDevices;
-        updatedConnectedDevices.filter((connectedDevice, index, arr) => {
-          if (connectedDevice.deviceID === device.id) {
-            arr.splice(index, 1);
-            return true;
-          }
-        });
-        setBtState({...btState, connectedDevices: updatedConnectedDevices});
-        sortedScannedDevices.sort(
-          sortConnectedDevicesFirst(updatedConnectedDevices),
-        );
+      bleManager.onDeviceDisconnected(device.id, async () => {
+        try {
+          updatedConnectedDevices = btState.connectedDevices;
+          updatedConnectedDevices.filter((connectedDevice, index, arr) => {
+            if (connectedDevice.deviceID === device.id) {
+              arr.splice(index, 1);
+              return true;
+            }
+          });
+          await removeData('connectedDevices');
+          setBtState({...btState, connectedDevices: updatedConnectedDevices});
+          sortedScannedDevices.sort(
+            sortConnectedDevicesFirst(updatedConnectedDevices),
+          );
+        } catch (error) {
+          console.error(error);
+        }
       });
     }
+    await saveData('connectedDevices', updatedConnectedDevices); // Could put setBtState in saveData as param. Think about it.
+
     setBtState({
       ...btState,
       connectedDevices: updatedConnectedDevices,

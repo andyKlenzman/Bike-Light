@@ -10,6 +10,7 @@ export const startDeviceScan = async (btState, setBtState) => {
       console.log('Scan error', error);
       return;
     }
+    // filters devices that are duplicates and not connectable
     if (discoveredDevice.isConnectable) {
       let isDuplicate = false;
       if (btState.scannedDevices) {

@@ -20,6 +20,8 @@ const Animation = () => {
     GravitySensor,
     MagneticSensor,
   } = readSensors();
+
+
   
 
   const style = useAnimatedStyle(() => {
