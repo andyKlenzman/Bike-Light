@@ -1,15 +1,30 @@
 import {Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {connectToDevice} from '../utils/Bluetooth/connectToDevice';
 import {disconnectFromDevice} from '../utils/Bluetooth/disconnectFromDevice';
-export const RenderScannedItem = ({item, btState, setBtState}) => {
-  let isConnected = btState.connectedDevices.some(device => {
+import {useSelector, useDispatch} from 'react-redux';
+
+export const RenderScannedItem = ({item}) => {
+  const dispatch = useDispatch();
+
+  const isLoading = useSelector(state => state.bluetooth.isLoading);
+  const connectedDevices = useSelector(
+    state => state.bluetooth.connectedDevices,
+  );
+
+
+  const scannedDevices = useSelector(
+    state => state.bluetooth.scannedDevices,
+  );
+
+
+  let isConnected = connectedDevices.some(device => {
     return device.deviceID === item.id;
   });
 
-  const backgroundColor = item.id === btState.isLoading ? '#3B3B3D' : '#1C1C1E';
-  const color = 'white';
+  const backgroundColor = item.id === isLoading ? '#3B3B3D' : '#1C1C1E';
+
   const connectionStatus =
-    item.id === btState.isLoading
+    item.id === isLoading
       ? 'Loading'
       : isConnected
       ? 'Connected'
@@ -23,13 +38,12 @@ export const RenderScannedItem = ({item, btState, setBtState}) => {
         if (connectionStatus === 'Connected') {
           disconnectFromDevice(item, btState, setBtState);
         } else if (connectionStatus === 'Not Connected') {
-          connectToDevice(item, btState, setBtState);
+          connectToDevice(item, dispatch, connectedDevices, scannedDevices);
         } else if (connectionStatus === 'Loading') {
           console.log('be patient');
         }
       }}
       backgroundColor={backgroundColor}
-      textColor={color}
     />
   );
 };
@@ -39,7 +53,6 @@ export const BluetoothListItem = ({
   connectionStatus,
   onPress,
   backgroundColor,
-  textColor,
 }) => (
   <TouchableOpacity
     onPress={onPress}

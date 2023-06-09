@@ -1,6 +1,5 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, View, TouchableOpacity, Text} from 'react-native';
-import Context from '../state/Context';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -8,10 +7,30 @@ import Animated, {
 } from 'react-native-reanimated';
 import {Dimensions} from 'react-native';
 import BluetoothMain from '../components/🟣🟣🟣 BluetoothMain';
+import {useSelector, useDispatch} from 'react-redux';
+import {toggleDeviceDrawer} from '../state/slices/drawerSlice';
+
 const DeviceDrawer = () => {
-  const {drawerState, setDrawerState} = useContext(Context);
   const screenWidth = Dimensions.get('window').width;
   const rightDrawerX = useSharedValue(screenWidth);
+  const dispatch = useDispatch();
+
+  // update UI state
+  const handleToggleDeviceDrawer = () => {
+    dispatch(toggleDeviceDrawer());
+  };
+
+  // Query UI state
+  const isDeviceDrawerOpen = useSelector(
+    state => state.drawer.isDeviceDrawerOpen,
+  );
+
+  // animate drawer on state change
+  useEffect(() => {
+    rightDrawerX.value = withTiming(isDeviceDrawerOpen ? 0 : screenWidth, {
+      duration: 200,
+    });
+  }, [isDeviceDrawerOpen]);
 
   const animatedStyles = useAnimatedStyle(() => {
     return {
@@ -19,20 +38,11 @@ const DeviceDrawer = () => {
     };
   });
 
-  useEffect(() => {
-    rightDrawerX.value = withTiming(
-      drawerState.isDeviceDrawerOpen ? 0 : screenWidth,
-      {duration: 200},
-    );
-  }, [drawerState.isDeviceDrawerOpen]);
-
   return (
     <Animated.View style={[styles.drawerContainer, animatedStyles]}>
       <TouchableOpacity
         style={styles.overlay}
-        onPress={() =>
-          setDrawerState({...drawerState, isDeviceDrawerOpen: false})
-        }
+        onPress={handleToggleDeviceDrawer}
       />
       <View style={styles.rightDrawer}>
         <BluetoothMain />

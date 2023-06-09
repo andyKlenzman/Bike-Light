@@ -1,30 +1,45 @@
-/*
- * Scans for connectable and unique bluetooth devices and stores them in an array of objects
- */
 import {bleManager} from './bluetoothManager';
+import {
+  addScannedDevice,
+  setScannedDevices,
+} from '../../state/slices/bluetoothSlice';
 
-export const startDeviceScan = async (btState, setBtState) => {
-  let updatedScannedDevices = [];
+/*
+ * Thunk that scans for connectable and unique bluetooth devices and stores them in an array of objects
+ */
+
+export const startDeviceScan = async (dispatch, scannedDevices, connectedDevices) => {
+  let updatedScannedDevices = scannedDevices;
   bleManager.startDeviceScan(null, null, (error, discoveredDevice) => {
     if (error) {
-      console.log('Scan error', error);
+      console.error('Error in startDeviceScan.js. Try again : ', error);
       return;
     }
-    // filters devices that are duplicates and not connectable
+    // filters devices that are duplicates, unconnectable, and or already connected
     if (discoveredDevice.isConnectable) {
       let isDuplicate = false;
-      if (btState.scannedDevices) {
-        isDuplicate = updatedScannedDevices.some(item => {
-          return item.id === discoveredDevice.id;
-        });
-      }
-      if (!isDuplicate) {
-        updatedScannedDevices = [...updatedScannedDevices, discoveredDevice];
-        setBtState({...btState, scannedDevices: updatedScannedDevices});
+
+      isDuplicate = updatedScannedDevices.some(item => {
+        return item.id === discoveredDevice.id;
+      });
+      isConnected = connectedDevices.some(item => {
+        return item.id === discoveredDevice.id;
+      });
+      console.log('isDuplicate & isConnected in startDeviceScan: ', isDuplicate, isConnected);
+      if (!isDuplicate && !isConnected) {
+        //device data ensures only needed data is being added to state in a serialized state
+        const deviceData = {
+          id: discoveredDevice.id,
+          name: discoveredDevice.name,
+        };
+        updatedScannedDevices = [...updatedScannedDevices, deviceData];
+
+        dispatch(setScannedDevices(updatedScannedDevices));
       }
     }
   });
-  setTimeout(() => {
-    bleManager.stopDeviceScan();
-  }, 3000);
 };
+
+// setTimeout(() => {
+//   bleManager.stopDeviceScan();
+// }, 3000);

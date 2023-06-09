@@ -1,30 +1,35 @@
 Doing:
-  - refactor for redux. 
-  - understanding bluetooth. 
-
-Next up: disconnectFromDevice (will force my state to be clean)
--- caching data
-  - Understanding how to have data persist
-  - understand when the device will disonccect 
-    -- If the device goes into background mode, if it shuts off, if the app is closed what happens? 
-      --- feeling here is that
-      --- dont have a full understanding of background mode and how long connection will persist
-    -- best course of action is to remove async storage and test and document the behavior
+  -- how to show devices
+    --- scanned device duplicates
+    --- remove connectedDevice in scanned devices (edit connectTo)
+    --- prevent scannedDevices from showing connectedDevices (filter in scanning of devices)
 
 
-Bluetooth Overhaul
--- user flow
+Changes to test
+  -- startDeviceScan: updated scanned devices and setting array to avoid duplicates. Condition that the device must be connectable
+  -- connectToDevice: How to parse deviceDataForState. deleteScannedDevice removing a newly connected device from scannedDevices. 
+  -- sendDataToBluetooth: new function that takes in deviceDataForState
+  -- 
 
-
--- need more sophistication once connecting to multiple devices
--- filtering unneeded devices
--- voluntary disconnect from phone
--- automatic scanning (possibly pairing too)
--- global bluetooth state perforamnce
--- Why does button need to be pressed twice when device is connected, need to revisit connectToDevice.js
--- copy app given by jiro
+ 
+  -- enable connected devices
+    --- make async thunk. 
+  -- make sure it sends data
+  -- configure persist
+  -- device disconnect
+  -- test background mode and persist behavior
+  -- what data do I need in Connected Device? Depends on start and stop bluetooth coms, could just format data as what is needed for function. 
 
 To-do:
+Bluetooth Features
+  -- user flow
+  -- disconnectFromDevice (will force my state to be clean)
+  -- need more sophistication once connecting to multiple devices
+  -- filtering unneeded devices
+  -- voluntary disconnect from phone
+  -- automatic scanning (possibly pairing too)
+  -- Why does button need to be pressed twice when device is connected, need to revisit connectToDevice.js (check function in renderScannedItems)
+  -- copy app given by jiro
 
 - New features
   -- file saving
@@ -62,6 +67,14 @@ To-do:
   --
 
 ST NOTES:
-- I am running into state problems. This is why I need to use redux. I am tryuing to store data and keep app state consistent at the same time. 
+- action creators return the action type! Good to know 
+- can get rid of device sort if no longer going to use one array. And why am I doing this? 
+= Seems to be some options in PLX for working with saved data. Check out this bleManager function, how would it relate to state? Will prob find out its usefulness in testing. restoreStateFunction(restoredState)
+- a lot is changing in my bluetooth, and im seeing a ton of clutter in connect to Device. Im just going to mop it all up and build back what's needed.
+- May be able to get rid of updated scanned devices and just push, since redux is immutable anyway. Actually, it helps me keep out dupliocates. Need to pass hooks to function unfortunatley
+- Dont try to fix bluetooth while doing state, stay focused on the prize.
 
-LT Notes:
+- Just keep building. Fixing problems and making the code overall better, very good. Im pumped because once this is implemented, state should be super easy to handle and I can begin to work on adding more features on the TO DO list. YEEEEE
+  https://redux.js.org/tutorials/fundamentals/part-8-modern-redux
+
+  LT Notes:

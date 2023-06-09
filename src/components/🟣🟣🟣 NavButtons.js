@@ -1,17 +1,51 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Context from '../state/Context';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
+import {useSelector, useDispatch} from 'react-redux';
+import {
+  toggleDeviceDrawer,
+  toggleSettingsDrawer,
+} from '../state/slices/drawerSlice';
 
 const NavButtons = () => {
-  const {drawerState, setDrawerState} = useContext(Context);
   const deviceButtonX = useSharedValue(-60);
   const settingsButtonX = useSharedValue(0);
+  const dispatch = useDispatch();
+
+  // update UI state
+  const handleToggleDeviceDrawer = () => {
+    dispatch(toggleDeviceDrawer());
+  };
+
+  const handleToggleSettingsDrawer = () => {
+    dispatch(toggleSettingsDrawer());
+  };
+
+  // Query UI state
+  const isDeviceDrawerOpen = useSelector(
+    state => state.drawer.isDeviceDrawerOpen,
+  );
+  const isSettingsDrawerOpen = useSelector(
+    state => state.drawer.isSettingsDrawerOpen,
+  );
+
+  // Animate button motion on state change
+  useEffect(() => {
+    deviceButtonX.value = withTiming(
+      isDeviceDrawerOpen || isSettingsDrawerOpen ? 100 : -60,
+      {duration: 200},
+    );
+
+    settingsButtonX.value = withTiming(
+      isDeviceDrawerOpen || isSettingsDrawerOpen ? -100 : 0,
+      {duration: 200},
+    );
+  }, [isDeviceDrawerOpen, isSettingsDrawerOpen]);
 
   const animatedStylesDeviceButton = useAnimatedStyle(() => {
     return {
@@ -25,39 +59,19 @@ const NavButtons = () => {
     };
   });
 
-  useEffect(() => {
-    deviceButtonX.value = withTiming(
-      drawerState.isDeviceDrawerOpen || drawerState.isSettingsDrawerOpen
-        ? 100
-        : -60,
-      {duration: 200},
-    );
-
-    settingsButtonX.value = withTiming(
-      drawerState.isDeviceDrawerOpen || drawerState.isSettingsDrawerOpen
-        ? -100
-        : 0,
-      {duration: 200},
-    );
-  }, [drawerState.isDeviceDrawerOpen, drawerState.isSettingsDrawerOpen]);
-
   return (
     <View style={styles.container}>
       <Animated.View style={animatedStylesSettingsButton}>
         <TouchableOpacity
           style={styles.button}
-          onPress={() =>
-            setDrawerState({...drawerState, isSettingsDrawerOpen: true})
-          }>
+          onPress={handleToggleSettingsDrawer}>
           <Icon name="cog" size={30} color="#00c3ff" style={styles.icon} />
         </TouchableOpacity>
       </Animated.View>
       <Animated.View style={animatedStylesDeviceButton}>
         <TouchableOpacity
           style={styles.button}
-          onPress={() =>
-            setDrawerState({...drawerState, isDeviceDrawerOpen: true})
-          }>
+          onPress={handleToggleDeviceDrawer}>
           <Icon
             name="bluetooth"
             size={30}

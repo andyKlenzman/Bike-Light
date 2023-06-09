@@ -1,15 +1,10 @@
-import { configureStore } from '@reduxjs/toolkit';
-
-
-
+import {configureStore} from '@reduxjs/toolkit';
+import {drawerReducer} from './slices/drawerSlice';
+import { bluetoothReducer } from './slices/bluetoothSlice';
 export const store = configureStore({
-
-    reducer: {
-      
-      
-      
-    },
-    // middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(mutatePromptMiddleware)
-    
-  });
-  
+  reducer: {
+    drawer: drawerReducer,
+    bluetooth: bluetoothReducer,
+  },
+  // middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(mutatePromptMiddleware)
+});

@@ -1,17 +1,15 @@
 import {sendDataToBluetooth} from './sendDataToBluetooth';
-import readSensors from '../Sensors';
 import {transformSensorDataForBluetooth} from '../transformSensorDataForBluetooth';
-import { sleep } from '../sleep';
+import {setIsSendingSignal} from '../../state/slices/bluetoothSlice';
+import {sleep} from '../sleep';
 /*
 facilitates bluetooth communication, reads sensors
 */
-let timeoutID;
 
 let runBluetooth = false;
 export const startBluetoothCommunication = async (
   connectedDevices,
-  setIsSendingSignals,
-  isSendingSignals,
+  dispatch,
   RotationSensor,
   AccelerometerSensor,
   GyroscopeSensor,
@@ -23,7 +21,7 @@ export const startBluetoothCommunication = async (
       throw new Error(
         'No device found. Connect to Bluetooth device to send data.',
       );
-    setIsSendingSignals(true); //toggles UI button
+    dispatch(setIsSendingSignal(true)); //toggles UI button
     runBluetooth = true;
 
     while (runBluetooth) {
@@ -41,44 +39,24 @@ export const startBluetoothCommunication = async (
       } catch (error) {
         console.error('Error occurred while sending data to Bluetooth:', error);
         runBluetooth = false;
-        stopBluetoothCommunication(setIsSendingSignals);
+        stopBluetoothCommunication(dispatch);
       }
     }
     //toggles button
 
     // I wonder if set interval is causing the delay, maybe a loop would be better
   } catch (error) {
-    setIsSendingSignals(false);
+    dispatch(setIsSendingSignal(false));
 
     console.error(
       'Something went wrong in startBluetoothCommunication.js',
       error,
     );
-    stopBluetoothCommunication(setIsSendingSignals);
+    stopBluetoothCommunication(dispatch);
   }
 };
 
 export const stopBluetoothCommunication = setIsSendingSignals => {
   runBluetooth = false;
-  setIsSendingSignals(false);
+  dispatch(setIsSendingSignal(false));
 };
-
-// intervalID = setInterval(async () => {
-//   try {
-//     const data = transformSensorDataForBluetooth(
-//       RotationSensor,
-//       AccelerometerSensor,
-//       GyroscopeSensor,
-//       GravitySensor,
-//       MagneticSensor,
-//     );
-//     await sendDataToBluetooth(data, connectedDevices[0]);
-//   } catch (error) {
-//     console.error('Error occurred while sending data to Bluetooth:', error);
-//     stopBluetoothCommunication(setIsSendingSignals);
-//   }
-// }, 1);
-
-// clearInterval(intervalID);
-
-// let intervalID;

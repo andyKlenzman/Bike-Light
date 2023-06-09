@@ -1,15 +1,18 @@
-import {Text, View, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
+import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
 import {
   startBluetoothCommunication,
   stopBluetoothCommunication,
 } from '../utils/Bluetooth/startBluetoothCommunication';
-import {useContext, useState} from 'react';
-import Context from '../state/Context';
+import {useSelector, useDispatch} from 'react-redux';
 import readSensors from '../utils/Sensors';
 
 const SettingsMain = () => {
-  const {btState} = useContext(Context);
-  const [isSendingSignals, setIsSendingSignals] = useState(false);
+  const dispatch = useDispatch();
+  const connectedDevices = useSelector(
+    state => state.bluetooth.connectedDevices,
+  );
+  const isSendingSignal = useSelector(state => state.bluetooth.isSendingSignal);
+
   const {
     RotationSensor,
     AccelerometerSensor,
@@ -17,13 +20,13 @@ const SettingsMain = () => {
     GravitySensor,
     MagneticSensor,
   } = readSensors();
-  // passing isSendingSignals state to communication functions, so can cleanup the formatting of the button if there is an error
+
   return (
     <View style={styles.container}>
-      {isSendingSignals ? (
+      {isSendingSignal ? (
         <TouchableOpacity
           style={styles.button}
-          onPress={() => stopBluetoothCommunication(setIsSendingSignals)}>
+          onPress={() => stopBluetoothCommunication(dispatch)}>
           <Text style={styles.buttonText}>Stop</Text>
         </TouchableOpacity>
       ) : (
@@ -31,9 +34,8 @@ const SettingsMain = () => {
           style={styles.button}
           onPress={async () => {
             await startBluetoothCommunication(
-              btState.connectedDevices,
-              setIsSendingSignals,
-              isSendingSignals,
+              connectedDevices,
+              dispatch,
               RotationSensor,
               AccelerometerSensor,
               GyroscopeSensor,

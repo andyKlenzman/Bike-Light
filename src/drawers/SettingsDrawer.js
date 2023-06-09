@@ -1,6 +1,5 @@
-import React, {useContext, useEffect} from 'react';
-import {StyleSheet, View, TouchableOpacity, Text} from 'react-native';
-import Context from '../state/Context';
+import React, {useEffect} from 'react';
+import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -9,10 +8,30 @@ import Animated, {
 import {Dimensions} from 'react-native';
 import SettingsMain from '../components/🟣🟣🟣SettingsMain';
 
+import {useSelector, useDispatch} from 'react-redux';
+import {toggleSettingsDrawer} from '../state/slices/drawerSlice';
+
 const SettingsDrawer = () => {
-  const {drawerState, setDrawerState} = useContext(Context);
+  const dispatch = useDispatch();
+
+  // update UI state
+  const handleToggleSettingsDrawer = () => {
+    dispatch(toggleSettingsDrawer());
+  };
+
+  // Query UI state
+  const isSettingsDrawerOpen = useSelector(
+    state => state.drawer.isSettingsDrawerOpen,
+  );
+
   const screenWidth = Dimensions.get('window').width;
   const leftDrawerX = useSharedValue(-screenWidth);
+
+  useEffect(() => {
+    leftDrawerX.value = withTiming(isSettingsDrawerOpen ? 0 : -screenWidth, {
+      duration: 200,
+    });
+  }, [isSettingsDrawerOpen]);
 
   const animatedStyles = useAnimatedStyle(() => {
     return {
@@ -20,20 +39,11 @@ const SettingsDrawer = () => {
     };
   });
 
-  useEffect(() => {
-    leftDrawerX.value = withTiming(
-      drawerState.isSettingsDrawerOpen ? 0 : -screenWidth,
-      {duration: 200},
-    );
-  }, [drawerState.isSettingsDrawerOpen]);
-
   return (
     <Animated.View style={[styles.drawerContainer, animatedStyles]}>
       <TouchableOpacity
         style={styles.overlay}
-        onPress={() =>
-          setDrawerState({...drawerState, isSettingsDrawerOpen: false})
-        }
+        onPress={handleToggleSettingsDrawer}
       />
       <View style={styles.leftDrawer}>
         <SettingsMain />
