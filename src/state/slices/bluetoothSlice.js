@@ -54,6 +54,14 @@ const bluetoothSlice = createSlice({
     setConnectedDevices(state, action) {
       state.connectedDevices = action.payload;
     },
+    deleteConnectedDevice(state, action) {
+      const deviceId = action.payload;
+
+      const updateConnectedDevices = state.connectedDevices.filter(
+        device => device.id !== deviceId,
+      );
+      state.connectedDevices = updateConnectedDevices;
+    },
     setIsSendingSignal(state, action) {
       state.isSendingSignal = action.payload;
     },
@@ -73,6 +81,8 @@ export const {
   setConnectedDevices,
   toggleIsSendingSignal,
   deleteScannedDevice,
+  setIsSendingSignal,
+  deleteConnectedDevice,
 } = bluetoothSlice.actions;
 
 export const bluetoothReducer = bluetoothSlice.reducer;

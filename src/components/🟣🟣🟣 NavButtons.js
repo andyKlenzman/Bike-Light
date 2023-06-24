@@ -1,85 +1,51 @@
-import React, {useEffect} from 'react';
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-} from 'react-native-reanimated';
+import Animated, {useAnimatedStyle, withTiming} from 'react-native-reanimated';
 import {useSelector, useDispatch} from 'react-redux';
-import {
-  toggleDeviceDrawer,
-  toggleSettingsDrawer,
-} from '../state/slices/drawerSlice';
+import {changeDrawer} from '../state/slices/drawerSlice';
 
+import readSensors from '../utils/Sensors';
 const NavButtons = () => {
-  const deviceButtonX = useSharedValue(-60);
-  const settingsButtonX = useSharedValue(0);
   const dispatch = useDispatch();
+  const {RotationSensor, MagneticSensor} = readSensors();
 
-  // update UI state
-  const handleToggleDeviceDrawer = () => {
-    dispatch(toggleDeviceDrawer());
-  };
+  // Query UI state for
+  const openDrawer = useSelector(state => state.drawer.openDrawer);
 
-  const handleToggleSettingsDrawer = () => {
-    dispatch(toggleSettingsDrawer());
-  };
+  const buttonStyle = useAnimatedStyle(() => {
+    const diameter = Math.abs(MagneticSensor.sensor.value.x / 20 + 8);
+    const color = Math.abs(RotationSensor.sensor.value.yaw * 100);
 
-  // Query UI state
-  const isDeviceDrawerOpen = useSelector(
-    state => state.drawer.isDeviceDrawerOpen,
-  );
-  const isSettingsDrawerOpen = useSelector(
-    state => state.drawer.isSettingsDrawerOpen,
-  );
-
-  // Animate button motion on state change
-  useEffect(() => {
-    deviceButtonX.value = withTiming(
-      isDeviceDrawerOpen || isSettingsDrawerOpen ? 100 : -60,
-      {duration: 200},
-    );
-
-    settingsButtonX.value = withTiming(
-      isDeviceDrawerOpen || isSettingsDrawerOpen ? -100 : 0,
-      {duration: 200},
-    );
-  }, [isDeviceDrawerOpen, isSettingsDrawerOpen]);
-
-  const animatedStylesDeviceButton = useAnimatedStyle(() => {
     return {
-      transform: [{translateX: deviceButtonX.value}],
+      height: withTiming(diameter * 10 + 10, {duration: 100}), 
+      width: withTiming(diameter * 10 + 10, {duration: 100}), 
+      backgroundColor: `hsl(${color}, 50%,50%)`, 
+      borderRadius: withTiming((diameter * 10) / 2 +10 , {duration: 100}), // Ensures the button stays circular
     };
   });
-
-  const animatedStylesSettingsButton = useAnimatedStyle(() => {
-    return {
-      transform: [{translateX: settingsButtonX.value}],
-    };
-  });
-
   return (
     <View style={styles.container}>
-      <Animated.View style={animatedStylesSettingsButton}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleToggleSettingsDrawer}>
-          <Icon name="cog" size={30} color="#00c3ff" style={styles.icon} />
+      <View style={styles.row}>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={[styles.button]}
+            onPress={() => dispatch(changeDrawer('left'))}>
+            <Icon name="sliders" size={30} color="white" />
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity onPress={() => dispatch(changeDrawer('center'))}>
+          <Animated.View style={[buttonStyle, styles.button]}>
+            <Icon name="play" size={30} color="white" />
+          </Animated.View>
         </TouchableOpacity>
-      </Animated.View>
-      <Animated.View style={animatedStylesDeviceButton}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleToggleDeviceDrawer}>
-          <Icon
-            name="bluetooth"
-            size={30}
-            color="#00c3ff"
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-      </Animated.View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={[styles.button]}
+            onPress={() => dispatch(changeDrawer('right'))}>
+            <Icon name="bluetooth" size={30} color="white" />
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 };
@@ -91,19 +57,28 @@ const styles = StyleSheet.create({
     bottom: 0,
     height: '10%',
     width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 45,
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  buttonContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   button: {
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: 'black',
     width: 60,
     height: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
     borderRadius: 30,
+
     shadowColor: '#00c3ff',
     shadowOffset: {width: 0, height: 0},
     shadowOpacity: 0.5,

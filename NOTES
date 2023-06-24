@@ -1,35 +1,43 @@
 Doing:
-  -- how to show devices
-    --- scanned device duplicates
-    --- remove connectedDevice in scanned devices (edit connectTo)
-    --- prevent scannedDevices from showing connectedDevices (filter in scanning of devices)
+-- Buttons state and screen synced
+  --- running into weird byg about rendering in the wrong order. Seems to have started with dev of responsive buttons. Need to be running on phone when in dev (or not).... dont know what but will let it go. 
 
+
+
+UI REDO (lets make this thing get me a job or a dollar from a stranger)
+
+--- what is the vision?
+--- saved preferences/saved dances
+-- take time to refactor code to be beautiful
+---
+
+-- Glowing borders
+-- Navigation Feedback
+-- Written commands state change
+-- Writeen commands animation
+-- Animation from one to the other.
 
 Changes to test
-  -- startDeviceScan: updated scanned devices and setting array to avoid duplicates. Condition that the device must be connectable
-  -- connectToDevice: How to parse deviceDataForState. deleteScannedDevice removing a newly connected device from scannedDevices. 
-  -- sendDataToBluetooth: new function that takes in deviceDataForState
-  -- 
 
- 
-  -- enable connected devices
-    --- make async thunk. 
-  -- make sure it sends data
-  -- configure persist
-  -- device disconnect
-  -- test background mode and persist behavior
-  -- what data do I need in Connected Device? Depends on start and stop bluetooth coms, could just format data as what is needed for function. 
+To-do:'
+-- user feedback
+--- glowing box
+--- command animation
+--persistent data of connectedDev
+--background mode performance
+--smoothing functions
+-- dynamic data reading (array length )
+-- fix variable names for drawers(left right center please. keep consistent)
 
-To-do:
 Bluetooth Features
-  -- user flow
-  -- disconnectFromDevice (will force my state to be clean)
-  -- need more sophistication once connecting to multiple devices
-  -- filtering unneeded devices
-  -- voluntary disconnect from phone
-  -- automatic scanning (possibly pairing too)
-  -- Why does button need to be pressed twice when device is connected, need to revisit connectToDevice.js (check function in renderScannedItems)
-  -- copy app given by jiro
+-- user flow
+-- disconnectFromDevice (will force my state to be clean)
+-- need more sophistication once connecting to multiple devices
+-- filtering unneeded devices
+-- voluntary disconnect from phone
+-- automatic scanning (possibly pairing too)
+-- Why does button need to be pressed twice when device is connected, need to revisit connectToDevice.js (check function in renderScannedItems)
+-- copy app given by jiro
 
 - New features
   -- file saving
@@ -67,9 +75,19 @@ Bluetooth Features
   --
 
 ST NOTES:
-- action creators return the action type! Good to know 
-- can get rid of device sort if no longer going to use one array. And why am I doing this? 
-= Seems to be some options in PLX for working with saved data. Check out this bleManager function, how would it relate to state? Will prob find out its usefulness in testing. restoreStateFunction(restoredState)
+
+- need to be humbled by a really good software engineer, I can't be going that fast.
+- Add and swipe gestures and all that stuff, but do not put work into using the center drawer yet. It does not have a purpose and will only have a purpose when I do some product testing and maybe I can omit it all together.
+- controls could be all moveable balls.
+- what if I allowed the device to scan, do its thing, but executed cleaning functions outside of it. Set up a listener that listens to changes in the local array that it modifies, so I am not limited by a function that was called with old state data.
+- i bet you it is from old funciton calls, they dont have access to most up to date info.
+- This data issue is crazy, what if I kept one list of devices,scanned and not, rather than have two lists, then have a flag that says connected or not, have a get connectedDevices function to call. UGH.
+- action creators return the action type! Good to know
+- can get rid of device sort if no longer going to use one array. And why am I doing this?
+  = Seems to be some options in PLX for working with saved data. Check out this bleManager function, how would it relate to state? Will prob find out its usefulness in testing. restoreStateFunction(restoredState)
+  ---- shows data for connection if there is an interested periferal.
+  ---- might have to decide between using restoreStateFunction and persist. If restoreStateFunction only gives data when the device is connected to the OS, that's more dynamic then using persist, which will need to make all sorts of adjustments based on whether or not the state is connected.
+  ----on state restored and store restorer options???
 - a lot is changing in my bluetooth, and im seeing a ton of clutter in connect to Device. Im just going to mop it all up and build back what's needed.
 - May be able to get rid of updated scanned devices and just push, since redux is immutable anyway. Actually, it helps me keep out dupliocates. Need to pass hooks to function unfortunatley
 - Dont try to fix bluetooth while doing state, stay focused on the prize.

@@ -32,10 +32,10 @@ const SettingsMain = () => {
       ) : (
         <TouchableOpacity
           style={styles.button}
-          onPress={async () => {
-            await startBluetoothCommunication(
-              connectedDevices,
+          onPress={() => {
+            startBluetoothCommunication(
               dispatch,
+              connectedDevices,
               RotationSensor,
               AccelerometerSensor,
               GyroscopeSensor,

@@ -1,5 +1,5 @@
 import {Text, View, StyleSheet, FlatList, TouchableOpacity} from 'react-native';
-import {useEffect} from 'react';
+import {useEffect, useCallback} from 'react';
 import Context from '../state/Context';
 import EmptyList from '../utils/EmptyList';
 import {RenderScannedItem} from './🟡 BluetoothListItem';
@@ -9,37 +9,33 @@ import {useDispatch, useSelector} from 'react-redux';
 import {setScannedDevices} from '../state/slices/bluetoothSlice';
 
 export const BluetoothEnabledScreen = () => {
-  const scannedDevices = useSelector(state => state.bluetooth.scannedDevices);
-  const connectedDevices = useSelector(state => state.bluetooth.connectedDevices);
-  const isDeviceDrawerOpen = useSelector(
-    state => state.drawer.isDeviceDrawerOpen,
-  );
   const dispatch = useDispatch();
+  const scannedDevices = useSelector(state => state.bluetooth.scannedDevices);
+  const connectedDevices = useSelector(
+    state => state.bluetooth.connectedDevices,
+  );
+  const allDevices = [...connectedDevices, ...scannedDevices];
+  const openDrawer = useSelector(state => state.drawer.openDrawer);
+  const isDeviceDrawerOpen = openDrawer === 'right';
 
   // runs and stops scan automatically when app opens or closes
   useEffect(() => {
     if (isDeviceDrawerOpen) {
-      startDeviceScan(dispatch, scannedDevices);
+      startDeviceScan(dispatch, scannedDevices, connectedDevices);
     } else {
-      dispatch(setScannedDevices([])); //clears scanned devices so user gets up to date results
+      dispatch(setScannedDevices([]));
       bleManager.stopDeviceScan();
     }
-  }, [isDeviceDrawerOpen]);
+    return () => {
+      bleManager.stopDeviceScan();
+    };
+  }, [isDeviceDrawerOpen, connectedDevices]);
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={Object.values(connectedDevices)}
-        extraData={[connectedDevices]}
-        keyExtractor={item => item.id}
-        style={{marginBottom: 70}}
-        renderItem={({item}) => <RenderScannedItem item={item} />}
-        ListEmptyComponent={EmptyList}
-      />
-      <Text>Scanned</Text>
-      <FlatList
-        data={Object.values(scannedDevices)}
-        extraData={[scannedDevices]}
+        data={Object.values(allDevices)}
+        extraData={[allDevices]}
         keyExtractor={item => item.id}
         style={{marginBottom: 0}}
         renderItem={({item}) => <RenderScannedItem item={item} />}

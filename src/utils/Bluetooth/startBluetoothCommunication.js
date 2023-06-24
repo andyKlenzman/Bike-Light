@@ -8,8 +8,8 @@ facilitates bluetooth communication, reads sensors
 
 let runBluetooth = false;
 export const startBluetoothCommunication = async (
-  connectedDevices,
   dispatch,
+  connectedDevices,
   RotationSensor,
   AccelerometerSensor,
   GyroscopeSensor,
@@ -17,15 +17,18 @@ export const startBluetoothCommunication = async (
   MagneticSensor,
 ) => {
   try {
-    if (connectedDevices.length === 0)
+    if (connectedDevices.length === 0) {
       throw new Error(
         'No device found. Connect to Bluetooth device to send data.',
       );
+    }
+
     dispatch(setIsSendingSignal(true)); //toggles UI button
     runBluetooth = true;
 
     while (runBluetooth) {
       try {
+
         const data = transformSensorDataForBluetooth(
           RotationSensor,
           AccelerometerSensor,
@@ -46,8 +49,6 @@ export const startBluetoothCommunication = async (
 
     // I wonder if set interval is causing the delay, maybe a loop would be better
   } catch (error) {
-    dispatch(setIsSendingSignal(false));
-
     console.error(
       'Something went wrong in startBluetoothCommunication.js',
       error,
@@ -56,7 +57,7 @@ export const startBluetoothCommunication = async (
   }
 };
 
-export const stopBluetoothCommunication = setIsSendingSignals => {
+export const stopBluetoothCommunication = dispatch => {
   runBluetooth = false;
   dispatch(setIsSendingSignal(false));
 };

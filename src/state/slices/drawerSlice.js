@@ -4,16 +4,13 @@ export const drawerSlice = createSlice({
   name: 'drawer',
   initialState: initalState.drawer,
   reducers: {
-    toggleDeviceDrawer(state, action) {
-      state.isDeviceDrawerOpen = !state.isDeviceDrawerOpen;
-    },
-    toggleSettingsDrawer(state, action) {
-      state.isSettingsDrawerOpen = !state.isSettingsDrawerOpen;
+    changeDrawer(state, action) {
+      state.openDrawer = action.payload;
     },
   },
   // extraReducers: {}, //using builder callback from now on
 });
 
-export const {toggleDeviceDrawer, toggleSettingsDrawer} = drawerSlice.actions;
+export const {changeDrawer} = drawerSlice.actions;
 
 export const drawerReducer = drawerSlice.reducer;

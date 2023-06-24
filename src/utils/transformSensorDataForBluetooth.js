@@ -1,13 +1,7 @@
 import {mapAndRoundNumber} from './mapAndRoundNumber';
 
 // can possibly use to build out new features
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withSpring,
-  withTiming,
-  withDecay,
-} from 'react-native-reanimated';
+
 
 export const transformSensorDataForBluetooth = (
   RotationSensor,

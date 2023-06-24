@@ -1,8 +1,5 @@
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import NavButtons from '../components/🟣🟣🟣 NavButtons';
-import SettingsDrawer from '../drawers/SettingsDrawer';
-import DeviceDrawer from '../drawers/DeviceDrawer';
-import ReanimatedPractice from '../components/🟣🟣🟣 Animation';
 import {useEffect} from 'react';
 import {bleManager} from '../utils/Bluetooth/bluetoothManager';
 import {useDispatch} from 'react-redux';
@@ -10,6 +7,9 @@ import {
   fetchBluetoothState,
   setIsBluetoothOn,
 } from '../state/slices/bluetoothSlice';
+import Instructions from '../components/Instructions';
+import Drawers from '../drawers/🟣🟣🟣 Drawers';
+
 const MainScreen = () => {
   const dispatch = useDispatch();
 
@@ -22,12 +22,12 @@ const MainScreen = () => {
     dispatch(setIsBluetoothOn(state));
   });
 
+  
   return (
     <View style={styles.container}>
-      <ReanimatedPractice />
+      <Instructions />
+      <Drawers />
       <NavButtons />
-      <SettingsDrawer />
-      <DeviceDrawer />
     </View>
   );
 };
@@ -38,5 +38,5 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
     width: '100%',
-  },
+  }
 });

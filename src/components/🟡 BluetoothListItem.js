@@ -11,14 +11,13 @@ export const RenderScannedItem = ({item}) => {
     state => state.bluetooth.connectedDevices,
   );
 
-
   const scannedDevices = useSelector(
     state => state.bluetooth.scannedDevices,
   );
 
 
   let isConnected = connectedDevices.some(device => {
-    return device.deviceID === item.id;
+    return device.id === item.id;
   });
 
   const backgroundColor = item.id === isLoading ? '#3B3B3D' : '#1C1C1E';
@@ -36,7 +35,7 @@ export const RenderScannedItem = ({item}) => {
       connectionStatus={connectionStatus}
       onPress={() => {
         if (connectionStatus === 'Connected') {
-          disconnectFromDevice(item, btState, setBtState);
+          disconnectFromDevice(item, dispatch);
         } else if (connectionStatus === 'Not Connected') {
           connectToDevice(item, dispatch, connectedDevices, scannedDevices);
         } else if (connectionStatus === 'Loading') {

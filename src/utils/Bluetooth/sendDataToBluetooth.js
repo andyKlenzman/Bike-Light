@@ -13,14 +13,15 @@ export const sendDataToBluetooth = async (data, device) => {
       );
     if (!data)
       throw new Error('No motion data found. Restart app and try again');
-    const jsonString = JSON.stringify(data)
+    const jsonString = JSON.stringify(data);
     const base64Data = encode(jsonString);
 
-
-    // going to test if I can use this function instead so I can go with storing less information in the state and make sure it iss serializavane
-    // const response = await device.writeWithResponse(base64Data);
-    const response = await bleManager.writeCharacteristicWithResponseForDevice()(base64Data);
-    // console.log('SENT   ', data.rotX);
+    const response = await bleManager.writeCharacteristicWithResponseForDevice(
+      device.id,
+      device.serviceUUID,
+      device.characteristicUUID,
+      base64Data,
+    );
   } catch (error) {
     throw error;
   }

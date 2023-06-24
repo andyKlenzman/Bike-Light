@@ -1,15 +1,13 @@
 import {bleManager} from './bluetoothManager';
-import {
-  addScannedDevice,
-  setScannedDevices,
-} from '../../state/slices/bluetoothSlice';
+import {setScannedDevices} from '../../state/slices/bluetoothSlice';
 
 /*
  * Thunk that scans for connectable and unique bluetooth devices and stores them in an array of objects
  */
 
-export const startDeviceScan = async (dispatch, scannedDevices, connectedDevices) => {
+export const startDeviceScan = (dispatch, scannedDevices, connectedDevices) => {
   let updatedScannedDevices = scannedDevices;
+  let updatedConnectedDevices = connectedDevices;
   bleManager.startDeviceScan(null, null, (error, discoveredDevice) => {
     if (error) {
       console.error('Error in startDeviceScan.js. Try again : ', error);
@@ -18,28 +16,41 @@ export const startDeviceScan = async (dispatch, scannedDevices, connectedDevices
     // filters devices that are duplicates, unconnectable, and or already connected
     if (discoveredDevice.isConnectable) {
       let isDuplicate = false;
+      let isConnected = false;
 
       isDuplicate = updatedScannedDevices.some(item => {
         return item.id === discoveredDevice.id;
       });
-      isConnected = connectedDevices.some(item => {
+      isConnected = updatedConnectedDevices.some(item => {
         return item.id === discoveredDevice.id;
       });
-      console.log('isDuplicate & isConnected in startDeviceScan: ', isDuplicate, isConnected);
+
       if (!isDuplicate && !isConnected) {
         //device data ensures only needed data is being added to state in a serialized state
         const deviceData = {
           id: discoveredDevice.id,
           name: discoveredDevice.name,
         };
-        updatedScannedDevices = [...updatedScannedDevices, deviceData];
 
+        updatedScannedDevices = [...updatedScannedDevices, deviceData];
         dispatch(setScannedDevices(updatedScannedDevices));
       }
     }
   });
 };
 
-// setTimeout(() => {
-//   bleManager.stopDeviceScan();
-// }, 3000);
+/**
+ *
+ *
+ *
+ * Some pseud code
+ *
+ * scan device{
+ * add to array
+ * }
+ * if(array changes ){
+ * perform cleaning functions like checking against connected and duplicates, then push to state. }
+ *
+ *
+ * create an action which will do the cleaning, triggered when start device scan triggers a useEffect by adding to the array
+ */

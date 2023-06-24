@@ -1,21 +1,16 @@
 import {bleManager} from './bluetoothManager';
 import {extractWriteCharacteristic} from './extractWriteCharacteristic';
-import {sortConnectedDevicesFirst} from './sortConnectedDevicesFirst';
 import {
   setIsLoading,
   setConnectedDevices,
   deleteScannedDevice,
+  deleteConnectedDevice,
 } from '../../state/slices/bluetoothSlice';
 /*
 Connect to BT device, sorts array so connected are at top, filters duplicates, handles UI state changes, and loads BT device datsa to state.
 */
 
-export const connectToDevice = async (
-  device,
-  dispatch,
-  connectedDevices,
-  scannedDevices,
-) => {
+export const connectToDevice = async (device, dispatch, connectedDevices) => {
   console.log(`Connecting to ${device.name ? device.name : device.id}`);
   try {
     dispatch(setIsLoading(device.id));
@@ -40,40 +35,30 @@ export const connectToDevice = async (
 
     // If the device is unique, add it's characteristics to the array of connected devices.
 
-    const updatedConnectedDevices = connectedDevices;
+    let updatedConnectedDevices = connectedDevices;
     const newConnectedDeviceData = {
       id: writeCharacteristic.deviceID,
-      serviceUUID: writeCharacteristic.UUID,
-      characteristicUUID: writeCharacteristic.characteristicUUID,
-      name: writeCharacteristic.name,
+      serviceUUID: writeCharacteristic.serviceUUID,
+      characteristicUUID: writeCharacteristic.uuid,
+      name: device.name,
     };
 
-    if (!isDuplicate) {
-      updatedConnectedDevices = [
-        ...updatedConnectedDevices,
-        newConnectedDeviceData,
-      ];
+    updatedConnectedDevices = [
+      ...updatedConnectedDevices,
+      newConnectedDeviceData,
+    ];
 
-      dispatch(setConnectedDevices(updatedConnectedDevices));
-      dispatch(deleteScannedDevice(newConnectedDeviceData.id))
+    dispatch(deleteScannedDevice(newConnectedDeviceData.id));
+    dispatch(setConnectedDevices(updatedConnectedDevices));
 
-      // Set up a listener, so if the device disconnects, remove it from connectedDevices and sort connected to top of array of devices.
-      bleManager.onDeviceDisconnected(device.id, async () => {
-        try {
-          updatedConnectedDevices = connectedDevices;
-          updatedConnectedDevices.filter((connectedDevice, index, arr) => {
-            if (connectedDevice.deviceID === device.id) {
-              arr.splice(index, 1);
-              return true;
-            }
-          });
-          dispatch(setConnectedDevices(updatedConnectedDevices));
-        } catch (error) {
-          console.error(error);
-        }
-      });
-    }
-
+    // Set up a listener, so if the device disconnects, remove it from connectedDevices and sort connected to top of array of devices.
+    bleManager.onDeviceDisconnected(device.id, async () => {
+      try {
+        dispatch(deleteConnectedDevice(device.id));
+      } catch (error) {
+        console.error(error);
+      }
+    });
     dispatch(setIsLoading(''));
   } catch (e) {
     dispatch(setIsLoading(''));
