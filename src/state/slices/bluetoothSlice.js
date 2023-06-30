@@ -7,7 +7,6 @@ import {
 } from '@reduxjs/toolkit';
 import {bleManager} from '../../utils/Bluetooth/bluetoothManager';
 
-// const bluetoothAdapter = createEntityAdapter();
 
 export const fetchBluetoothState = createAsyncThunk(
   'bluetooth/fetchBluetoothState',
@@ -21,11 +20,7 @@ export const fetchBluetoothState = createAsyncThunk(
   },
 );
 
-// export const saveNewTodo = createAsyncThunk('todos/saveNewTodo', async text => {
-//   const initialTodo = {text};
-//   const response = await client.post('/fakeApi/todos', {todo: initialTodo});
-//   return response.todo;
-// });
+//this is way too many reducers, too much to maintain... break it up into general BT/microcontroller next time, or find a way to simllify, but as a rule of thumb, this is too much, even though it doesnt seem like it when writing it in the moment. I don't want to maintain this code
 
 const bluetoothSlice = createSlice({
   name: 'bluetooth',

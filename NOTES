@@ -1,98 +1,44 @@
+Principles
+-- Have a vision, sharpen it, iterate it
+-- refactor your code, make it audrey lorde readable
+-- Goal is to get a dollar from a stranger / job / have fun
+-- "hit the user on the head" UI Features
+-- Bic lighter is inspiration (the button getting colorful is sparks, led turning on is flame)
+-- #1 is changeability
+
+
+
 Doing:
--- Buttons state and screen synced
-  --- running into weird byg about rendering in the wrong order. Seems to have started with dev of responsive buttons. Need to be running on phone when in dev (or not).... dont know what but will let it go. 
+--Selector for modes
+--component /slice
 
+UI:
+-- selector for (modes , lightpatterns, and saved) // will need slices for all these
+--fix main button (make icons its opposite color of background), only two screens, pretty halo effect of ripple leaving when activated, disable functions
+-- add purchase tile in devices
+-- add more icons!
+-- feedback angle lights top third of screen
+-- allow for pulse of different colors for the feedback mechanism (border and angel and items)
+-- vibration
+-- nuanced screen swipe sensitivity
+-- way to save and edit saved shows
+-- halo light responds to motion
+-- make gesture handler size of entire screen
+-- welcome greeting
+--transform errors into satisfying and actionable UI feedback
 
-
-UI REDO (lets make this thing get me a job or a dollar from a stranger)
-
---- what is the vision?
---- saved preferences/saved dances
--- take time to refactor code to be beautiful
----
-
--- Glowing borders
--- Navigation Feedback
--- Written commands state change
--- Writeen commands animation
--- Animation from one to the other.
-
-Changes to test
-
-To-do:'
--- user feedback
---- glowing box
---- command animation
+FUNCTIONALITY:
 --persistent data of connectedDev
 --background mode performance
 --smoothing functions
--- dynamic data reading (array length )
--- fix variable names for drawers(left right center please. keep consistent)
+-- dynamic data reading (array length)
+-- code modes
+-- multi-BT functionality
+--file saving
 
-Bluetooth Features
--- user flow
--- disconnectFromDevice (will force my state to be clean)
--- need more sophistication once connecting to multiple devices
--- filtering unneeded devices
--- voluntary disconnect from phone
--- automatic scanning (possibly pairing too)
--- Why does button need to be pressed twice when device is connected, need to revisit connectToDevice.js (check function in renderScannedItems)
--- copy app given by jiro
+ORGANIZATION:
+-- modular selection queries
+-- continue to globalize styles
 
-- New features
-  -- file saving
-  -- file sharing
-  -- smoothing functions
-  -- Send various types of data
-  --- map and round number not working
-  -- modes
-  -- animation
-  -- multi-device connect
-  -- "hit the user on the head" UI Features
-
-  - start/stop/save button
-  - when BT is off globally
-  - when no device is connected
-  - when device is connected
-  - when data is streaming
-  - when phone loses connections
-  - use blinking and pin modals to communicate
-
-- Testing implemented features
-  -- BT connect and displaying correct state (connected, loading, etc.) Sometimes needs to be pressed again.
-  -- caching data
-  -- background mode
-  -- bluetooth
-
-- Performance Improvements
-  -- global BT state
-- Error hnadling
-  -- when phone BT turns off
-
-- Microcontroller
-  -- When phone disconnects
-  -- Parsing data
-  --
-
-ST NOTES:
-
-- need to be humbled by a really good software engineer, I can't be going that fast.
-- Add and swipe gestures and all that stuff, but do not put work into using the center drawer yet. It does not have a purpose and will only have a purpose when I do some product testing and maybe I can omit it all together.
-- controls could be all moveable balls.
-- what if I allowed the device to scan, do its thing, but executed cleaning functions outside of it. Set up a listener that listens to changes in the local array that it modifies, so I am not limited by a function that was called with old state data.
-- i bet you it is from old funciton calls, they dont have access to most up to date info.
-- This data issue is crazy, what if I kept one list of devices,scanned and not, rather than have two lists, then have a flag that says connected or not, have a get connectedDevices function to call. UGH.
-- action creators return the action type! Good to know
-- can get rid of device sort if no longer going to use one array. And why am I doing this?
-  = Seems to be some options in PLX for working with saved data. Check out this bleManager function, how would it relate to state? Will prob find out its usefulness in testing. restoreStateFunction(restoredState)
-  ---- shows data for connection if there is an interested periferal.
-  ---- might have to decide between using restoreStateFunction and persist. If restoreStateFunction only gives data when the device is connected to the OS, that's more dynamic then using persist, which will need to make all sorts of adjustments based on whether or not the state is connected.
-  ----on state restored and store restorer options???
-- a lot is changing in my bluetooth, and im seeing a ton of clutter in connect to Device. Im just going to mop it all up and build back what's needed.
-- May be able to get rid of updated scanned devices and just push, since redux is immutable anyway. Actually, it helps me keep out dupliocates. Need to pass hooks to function unfortunatley
-- Dont try to fix bluetooth while doing state, stay focused on the prize.
-
-- Just keep building. Fixing problems and making the code overall better, very good. Im pumped because once this is implemented, state should be super easy to handle and I can begin to work on adding more features on the TO DO list. YEEEEE
-  https://redux.js.org/tutorials/fundamentals/part-8-modern-redux
-
-  LT Notes:
+LT NOTES
+-- Micro concert will need to randomly generated UU ID, because there will be issues with connecting multiple if they have the same. Or at least I am anticipating. This could also become an issue if I want to remember devices and the UU ID changes and I can't remember them.

@@ -17,6 +17,7 @@ export const startDeviceScan = (dispatch, scannedDevices, connectedDevices) => {
     if (discoveredDevice.isConnectable) {
       let isDuplicate = false;
       let isConnected = false;
+      let isAuthorizedDevice = false;
 
       isDuplicate = updatedScannedDevices.some(item => {
         return item.id === discoveredDevice.id;
@@ -24,8 +25,9 @@ export const startDeviceScan = (dispatch, scannedDevices, connectedDevices) => {
       isConnected = updatedConnectedDevices.some(item => {
         return item.id === discoveredDevice.id;
       });
+      isAuthorizedDevice = discoveredDevice.name === 'Lightbender';
 
-      if (!isDuplicate && !isConnected) {
+      if (!isDuplicate && !isConnected && isAuthorizedDevice) {
         //device data ensures only needed data is being added to state in a serialized state
         const deviceData = {
           id: discoveredDevice.id,
