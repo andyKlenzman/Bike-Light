@@ -11,11 +11,30 @@ import {useSharedValue} from 'react-native-reanimated';
 import {useEffect} from 'react';
 import theme from '../styles/theme';
 import {useSelector} from 'react-redux';
+import readSensors from '../utils/Sensors';
+import {appStatusCodes} from '../content/appStatusCodes';
+
 export const BannerText = () => {
+  const {RotationSensor} = readSensors();
+  const isSendingSignal = useSelector(state => state.bluetooth.isSendingSignal);
+
+  const feedbackStyles = useAnimatedStyle(() => {
+    if (isSendingSignal) {
+      const color = Math.abs(RotationSensor.sensor.value.yaw * 100);
+      return {
+        borderTopColor: `hsl(${color}, 50%,50%)`,
+      };
+    } else {
+      return {
+        borderTopColor: theme.colors.primaryBorder,
+      };
+    }
+  });
+
   const rotation = useSharedValue(0);
-  const {text, icon, spin} = useSelector(state => state.appStatus.status);
+  const appStatus = useSelector(state => state.appStatus.status);
   const animatedStyle = useAnimatedStyle(() => {
-    if (spin) {
+    if (appStatus.spin) {
       //if set to spin, animated styles activates.
       return {
         transform: [
@@ -37,24 +56,24 @@ export const BannerText = () => {
       }),
       -1,
     );
-    return () => cancelAnimation(rotation);
+    // return () => cancelAnimation(rotation);
   }, []);
 
   return (
-    <View style={styles.container}>
+    <Animated.View style={[styles.container, feedbackStyles]}>
       <View style={styles.bannerContainer}>
-        {icon ? ( //adds icon if specified in props
+        {appStatus.icon ? ( //adds icon if specified in props
           <Animated.View style={[animatedStyle, styles.iconContainer]}>
             <Icon
-              name={`${icon}`}
+              name={`${appStatus.icon}`}
               size={theme.iconSize.small}
               color="#cccccc"
             />
           </Animated.View>
         ) : null}
-        <Text style={styles.bannerText}>{text}</Text>
+        <Text style={styles.bannerText}>{appStatus.text}</Text>
       </View>
-    </View>
+    </Animated.View>
   );
 };
 
@@ -62,7 +81,7 @@ const styles = StyleSheet.create({
   bannerContainer: {
     flexDirection: 'row',
     width: '100%',
-    paddingHorizontal: 20,
+    // paddingHorizontal: 20,
     alignContent: 'center',
     justifyContent: 'center',
   },
@@ -79,17 +98,16 @@ const styles = StyleSheet.create({
     width: 'auto',
   },
   container: {
+    // margin: 40,
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    maxHeight: '10%',
+    maxHeight: theme.componentRatios.appStatus,
     borderTopWidth: 2,
     borderTopColor: theme.colors.primaryBorder,
-    borderTopStyle:'dotted',
     // borderBottomWidth: 2,
     // borderBottomColor: theme.colors.primaryBorder,
-
     width: 'auto',
   },
 });

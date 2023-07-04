@@ -5,40 +5,68 @@ Principles
 -- "hit the user on the head" UI Features
 -- Bic lighter is inspiration (the button getting colorful is sparks, led turning on is flame)
 -- #1 is changeability
+-- don't add recording yet! The simplest thing just plays. Keep it simple. Make a demo that works good.
+-- code is like simplifying a philosophy paper to make it air tight and understandable
+-- test current data structure before iterating to more complicated modes. IT IS THE KEY OF THIS APP!!!! It should be fucking easy to change this thing.
+-- computed values for how modes influence data transofmation file. Should have to update two files to add a new feature (the feature itself and central data file that takes care of the rest)
 
-
+Things to test:
+-- fix data selectors for new data structure (This shows why need to get this right. It is a pain to make a change now, start small and work over a long period of time.)
+-- light mode key (does new structure fuck up ability to read modes? consider all data structures and how they will propogate across app. Want all mode data structures to be the same. This is the problem of tshare as well. )
+-- data structure being sent over BT
 
 Doing:
---Selector for modes
---component /slice
+-- fix data selectors
+-- create curtain
 
 UI:
--- selector for (modes , lightpatterns, and saved) // will need slices for all these
---fix main button (make icons its opposite color of background), only two screens, pretty halo effect of ripple leaving when activated, disable functions
--- add purchase tile in devices
--- add more icons!
--- feedback angle lights top third of screen
--- allow for pulse of different colors for the feedback mechanism (border and angel and items)
--- vibration
--- nuanced screen swipe sensitivity
--- way to save and edit saved shows
--- halo light responds to motion
--- make gesture handler size of entire screen
--- welcome greeting
---transform errors into satisfying and actionable UI feedback
+-- Intro
+-- One new mode
+-- Etsy shop
 
 FUNCTIONALITY:
 --persistent data of connectedDev
 --background mode performance
---smoothing functions
 -- dynamic data reading (array length)
--- code modes
--- multi-BT functionality
---file saving
 
-ORGANIZATION:
+AFTER MVP
+UI
+-- animate gradient top of screen
+-- add more icons (ICON ABOVE EACH MODE)
+-- purchase animation and link
+-- vibration
+--create a background mode, can swipe up?? to lock app in place so can have it in pocket and it is undisruptive.
+-- wonder if I should jsut get rid of backgrouns operation if it is so subpar, this is a big blow...
+-- way to save and edit saved shows
+-- halo light responds to motion
+
+-- make gesture handler size of entire screen
+-- welcome greeting
+--transform errors into satisfying and actionable UI feedback
+-- cached data for the selectors
+-- centralize all written content
+-- Enhance main button
+
+FUNCTIONALITY
+--file saving
+--smoothing functions
+-- multi-BT functionality
+-- color modes.
+--Background mode options (replay, stick on one color, default mode) KISS THO
+
+DATA ORGANIZATION
+-- computed values for how modes influence data transofmation file. Should have to update two files to add a new feature (the feature itself and central data file that takes care of the rest)
+-- Each variable should be defined in the same way and have same data structure
+-- centralize string variables - mode, bluetooth, purchase in list item and where component is called.
 -- modular selection queries
 -- continue to globalize styles
+-- don't unpack readSensors until needed, so cluttered.
 
 LT NOTES
 -- Micro concert will need to randomly generated UU ID, because there will be issues with connecting multiple if they have the same. Or at least I am anticipating. This could also become an issue if I want to remember devices and the UU ID changes and I can't remember them.
+-- it would be awesome if I could press make a slice and it would open all the files I needed, could fill out a form and do it in muy project
+-- // could I use calculated fields to centralize all of this action? in slices. how will i make tshare changeable?
+-- could cancelAnimation be causing probs
+-- if background is impossible, could lock screen or do pocket mode and somehow keep screen on, just so it is easier to use,
+-- task identifier can extend background over 15 minutes https://developer.apple.com/documentation/foundation/nsurlsessiontask/1411231-taskidentifier
+-- may not be able to get this thing to run in background, atleast on iOS. Could interval large data transfers that can run on for awhile...

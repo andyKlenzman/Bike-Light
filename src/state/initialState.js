@@ -1,24 +1,24 @@
-// keep all inital state in one place, wonder how this will work with loading persistant state
-
-export const appStatusCodes = {
-  //100
-  // could read the data type, and if an array, go through timed sequences of written word
-  greeting: {text: 'Welcome', icon: 'face-smile-beam'}, //could do a nice flat icon here. smiley face like sell drugs fast
-  connectionPrompt: {text: 'Connect to lights', icon: null},
-  scanForDevice: {text: 'Scanning for devices', icon: 'spinner', spin: true},
-  connectionSuccess: {text: 'Device connected', icon: 'bluetooth'},
-  disconnectedNotification: {text: 'Lost connection', icon: 'bluetooth'}, //broken chain
-};
+//how to store and keep track of these types of variables, I guess centralized objects.
 
 export const initalState = {
   appStatus: {
     status: '',
+    highlightedButton: ''
+  },
+  interactionMode: {
+    freeplay: {isActive: true , key: 0},
+    replay:  {isActive: false , key: 1},
+    record:  {isActive: false , key: 2},
+  },
+  lightMode: {
+    rainbow: {isActive: true , key: 0},
+    wave:  {isActive: false , key: 1}
   },
   drawer: {
-    openDrawer: 'center',
+    openDrawer: 'right',
   },
   bluetooth: {
-    isBluetoothOn: 'PoweredOn', 
+    isBluetoothOn: 'PoweredOff', //correct wording
     connectedDevices: [],
     isLoading: '',
     scannedDevices: [],

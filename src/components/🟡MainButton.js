@@ -1,20 +1,30 @@
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useDispatch, useSelector} from 'react-redux';
-import {changeDrawer} from '../state/slices/drawerSlice';
 import readSensors from '../utils/Sensors';
 import {
   startBluetoothCommunication,
   stopBluetoothCommunication,
 } from '../utils/Bluetooth/startBluetoothCommunication';
 import Animated, {useAnimatedStyle} from 'react-native-reanimated';
-import {useEffect} from 'react';
-import NavButton from './🟡NavButton';
+import {selectActiveLightModeKey} from '../state/selectors/lightMode/selectActiveLightModeKey';
 import theme from '../styles/theme';
+import {useEffect} from 'react';
 
 const MainButton = () => {
-  // following are used to pass to send data to bluetooth
   const dispatch = useDispatch();
+
+  // state selections to determine the conditional rendering of the button
+  const connectedDevices = useSelector(
+    state => state.bluetooth.connectedDevices,
+  );
+  const isButtonActive = connectedDevices.length > 0;
+  const isSendingSignal = useSelector(state => state.bluetooth.isSendingSignal);
+
+  // light mode to be passed as prop to startBluetoothCommunication
+  const lightModeKey = useSelector(selectActiveLightModeKey);
+
+  // Data used to send information to bluetooth are used to pass to send data to bluetooth
   const {
     RotationSensor,
     AccelerometerSensor,
@@ -22,49 +32,40 @@ const MainButton = () => {
     GravitySensor,
     MagneticSensor,
   } = readSensors();
-  const connectedDevices = useSelector(
-    state => state.bluetooth.connectedDevices,
-  );
-  const isSendingSignal = useSelector(state => state.bluetooth.isSendingSignal);
 
-  //creates multicolored effect for play button
-  const startButtonStyle = useAnimatedStyle(() => {
+  // creates multicolored effect for play button
+  const activeButtonStyle = useAnimatedStyle(() => {
     const color = Math.abs(RotationSensor.sensor.value.yaw * 100);
-    if (connectedDevices.length === 0) {
-      return {
-        backgroundColor: '#545454',
-      };
-    } else {
-      return {
-        backgroundColor: `hsl(${color}, 50%,50%)`,
-      };
-    }
+    return {
+      backgroundColor: `hsl(${color}, 50%,50%)`,
+    };
   });
+  useEffect(() => {
+    console.log('hey', lightModeKey);
+  }, [lightModeKey]);
 
-  //creates disabled play button styles
-  const stylesIfButtonDisabled = () => {
-    if (connectedDevices.length === 0) {
-      return {
-        backgroundColor: '#545454',
-      };
-    }
+  const disabledButtonStyle = {
+    backgroundColor: theme.colors.disabledMainButton,
   };
-  const openDrawer = useSelector(state => state.drawer.openDrawer);
 
-  if (isSendingSignal) {
+  if (isSendingSignal && isButtonActive) {
+    //renders active stop button
+
     return (
       <TouchableOpacity onPress={() => stopBluetoothCommunication(dispatch)}>
-        <Animated.View style={[startButtonStyle, styles.button]}>
+        <Animated.View style={[activeButtonStyle, styles.button]}>
           <Icon name="pause" size={theme.iconSize.medium} color="white" />
         </Animated.View>
       </TouchableOpacity>
     );
-  } else {
+  } else if (isButtonActive && !isSendingSignal) {
+    //active start button
     return (
       <TouchableOpacity
         onPress={() => {
           startBluetoothCommunication(
             dispatch,
+            lightModeKey,
             connectedDevices,
             RotationSensor,
             AccelerometerSensor,
@@ -73,14 +74,26 @@ const MainButton = () => {
             MagneticSensor,
           );
         }}>
-        <Animated.View
-          style={[startButtonStyle, styles.button, stylesIfButtonDisabled()]}>
+        <Animated.View style={[activeButtonStyle, styles.button]}>
           <Icon
             name="play"
             size={theme.iconSize.medium}
             color={theme.colors.primaryIcon}
           />
         </Animated.View>
+      </TouchableOpacity>
+    );
+  } else if (!isButtonActive && !isSendingSignal) {
+    //inactive button
+    return (
+      <TouchableOpacity activeOpacity={1}>
+        <View style={[styles.button, disabledButtonStyle]}>
+          <Icon
+            name="play"
+            size={theme.iconSize.medium}
+            color={theme.colors.disabledIcon}
+          />
+        </View>
       </TouchableOpacity>
     );
   }
@@ -116,7 +129,6 @@ const styles = StyleSheet.create({
   button: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'black',
     width: 70,
     height: 70,
     borderRadius: 40,
@@ -124,7 +136,6 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 0},
     shadowOpacity: 0.5,
     shadowRadius: 20,
-    elevation: 5,
     shadowColor: '#00c3ff',
   },
   selectedButton: {

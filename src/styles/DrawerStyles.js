@@ -1,17 +1,16 @@
 import {StyleSheet} from 'react-native';
-
+import theme from './theme';
 export const DrawerStyles = StyleSheet.create({
   sectionContainer: {
     flex: 1,
     flexDirection: 'row',
-    maxHeight: '75%',
+    maxHeight: theme.componentRatios.drawers,
   },
   drawerContainer: {
     height: '100%',
-    backgroundColor: 'black',
+    backgroundColor: 'transparent',
     minWidth: '100%',
     zIndex: 2,
-
   },
   content: {
     flex: 1,

@@ -16,7 +16,7 @@ const theme = {
     secondaryBorder: 'grey',
     primaryIcon: 'white',
     disabledIcon: 'grey',
-    disabledMainButton: '#545454',
+    disabledMainButton: '#3A3B3C',
   },
   fontSize: {
     small: 18,
@@ -27,6 +27,13 @@ const theme = {
     small: 18,
     medium: 40,
     large: 75,
+    extraLarge: 100,
+  },
+  componentRatios: {
+    drawers: '75%',
+    appStatus: '10%',
+    navButtons: '15%',
+    navButton: 80,
   },
 
   // ...

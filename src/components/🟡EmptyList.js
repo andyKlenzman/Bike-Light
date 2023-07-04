@@ -1,10 +1,7 @@
 import {View, Text, StyleSheet} from 'react-native';
+import {ListItem} from './🟡ListItem';
 const EmptyList = () => {
-  return (
-    <View>
-      <Text style={styles.item}>No devices found</Text>
-    </View>
-  );
+  return <View></View>;
 };
 
 export default EmptyList;

@@ -1,9 +1,9 @@
 import {mapAndRoundNumber} from './mapAndRoundNumber';
 
 // can possibly use to build out new features
-
-
+// may add smoothing funtions, etc. 
 export const transformSensorDataForBluetooth = (
+  lightModeKey,
   RotationSensor,
   AccelerometerSensor,
   GyroscopeSensor,
@@ -20,6 +20,9 @@ export const transformSensorDataForBluetooth = (
   console.log('gravity: ', GravitySensor.sensor.value);
   console.log('magnet: ', MagneticSensor.sensor.value);
   console.log('rot: ', RotationSensor.sensor.value);
+
+
+
   const rotX = mapAndRoundNumber(
     RotationSensor.sensor.value.roll,
     -1,
@@ -42,5 +45,6 @@ export const transformSensorDataForBluetooth = (
     255,
   );
 
-  return [rotX, rotY, rotZ];
+  const transformedData = [lightModeKey, rotX, rotY, rotZ];
+  return transformedData;
 };

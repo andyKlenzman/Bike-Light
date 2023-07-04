@@ -3,28 +3,55 @@ import {Text, TouchableOpacity, StyleSheet, View} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import theme from '../styles/theme';
-import {listItemStyles} from '../styles/listItemStyles';
 import {ListItem} from './🟡ListItem';
 import {useDispatch, useSelector} from 'react-redux';
-export const ItemSelector = ({}) => {
-
-
-  
+export const ItemSelector = ({
+  title,
+  subtitle,
+  onLeftArrowPress,
+  onRightArrowPress,
+  disableArrows,
+  feedback,
+  status,
+}) => {
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={[styles.icons, styles.iconRight]}>
-        <Icon name="arrow-left" size={theme.iconSize.small} color="white" />
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.icons, styles.iconLeft]}>
-        <Icon name="arrow-right" size={theme.iconSize.small} color="white" />
-      </TouchableOpacity>
-      <ListItem type="mode" title="Freestyle" subtitle="select mode" center />
+    <View>
+      {disableArrows ? null : (
+        <>
+          <TouchableOpacity
+            style={[styles.icons, styles.iconRight]}
+            onPress={() => onLeftArrowPress()}>
+            <Icon name="arrow-left" size={theme.iconSize.small} color="white" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.icons, styles.iconLeft]}
+            onPress={() => onRightArrowPress()}>
+            <Icon
+              name="arrow-right"
+              size={theme.iconSize.small}
+              color="white"
+            />
+          </TouchableOpacity>
+        </>
+      )}
+
+      {/* DISPLAY */}
+      <ListItem
+        type="mode"
+        feedback={feedback} //tells ITEM to initiate rainbow borders when signal is sending
+        title={title.charAt(0).toUpperCase() + title.slice(1)} //capitalizes first letter of first word
+        subtitle={subtitle}
+        center
+        activeOpacity={1}
+        status={status}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  //
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -43,20 +70,22 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     // alignItems: 'center',
     // backgroundColor: '#1C1C1E',
-    marginBottom: 10,
-    borderRadius: 10,
+    // marginBottom: 10,
+    // borderRadius: 10,
   },
   icons: {
     position: 'absolute',
     zIndex: 2,
-    top: '37%',
+    top: '10%',
+
+    padding: 30,
     alignItems: 'center',
     justifyContent: 'center',
   },
   iconRight: {
-    left: '10%',
+    left: '0%',
   },
   iconLeft: {
-    left: '85%',
+    left: '80%',
   },
 });

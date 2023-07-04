@@ -1,7 +1,6 @@
 import {connectToDevice} from '../utils/Bluetooth/connectToDevice';
 import {disconnectFromDevice} from '../utils/Bluetooth/disconnectFromDevice';
 import {useSelector, useDispatch} from 'react-redux';
-import theme from '../styles/theme';
 import {ListItem} from './🟡ListItem';
 
 export const RenderScannedBluetoothItem = ({item}) => {
@@ -42,6 +41,8 @@ export const RenderScannedBluetoothItem = ({item}) => {
       item={item}
       subtitle={itemStatus.connection}
       type="bluetooth"
+      activeOpacity={0.5}
+      feedback
       onPress={() => {
         if (itemStatus.connection === 'Connected') {
           disconnectFromDevice(item, dispatch);

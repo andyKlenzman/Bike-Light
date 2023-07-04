@@ -1,7 +1,7 @@
 import {StyleSheet, View} from 'react-native';
 import NavButton from './🟡NavButton';
 import MainButton from './🟡MainButton';
-
+import theme from '../styles/theme';
 const NavButtons = () => {
   return (
     <View style={styles.container}>
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     bottom: 0,
-    height: '15%',
+    height: theme.componentRatios.navButtons,
     width: '100%',
     justifyContent: 'center',
 
@@ -31,5 +31,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     alignItems: 'center',
     width: '100%',
+    paddingBottom:'5%'
   },
 });

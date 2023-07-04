@@ -1,6 +1,5 @@
-import LeftDrawer from './🟣🟣🟣LeftDrawer';
 import RightDrawer from './🟣🟣🟣RightDrawer';
-import CenterDrawer from './🟣🟣🟣CenterDrawer';
+import LeftDrawer from './🟣🟣🟣LeftDrawer';
 import {useDispatch, useSelector} from 'react-redux';
 import {useEffect} from 'react';
 import {Dimensions} from 'react-native';
@@ -13,48 +12,46 @@ import Animated, {
 import {GestureDetector, Gesture} from 'react-native-gesture-handler';
 import {DrawerStyles} from '../styles/DrawerStyles';
 import {changeDrawer} from '../state/slices/drawerSlice'; // handles the gestures and toggling of three main drawers
-
+import {Text, View} from 'react-native';
 const Drawers = () => {
-  const screenWidth = -Dimensions.get('window').width; // negative saves having to put a negative sign in front of every function. View object moves into negative X direction
+  const screenWidth = -Dimensions.get('window').width; // made window negative to avoid putting - in every function
+  const dispatch = useDispatch();
 
   const screenPosition = {
     left: 0,
-    center: screenWidth,
-    right: screenWidth * 2,
+    right: screenWidth,
   };
 
-  const screenTransitions = {
-    leftCenter: screenWidth / 2,
-    centerRight: screenPosition.right - screenWidth / 2,
-    // it could even be a function.
+  // transition point is positioned at 25% of the screen width
+  const screenTransition = {
+    whenRightDrawerOpen: screenWidth / 2 - -screenWidth * 0.25,
+    whenLeftDrawerOpen: screenWidth / 2 + -screenWidth * 0.25,
   };
 
-  const dispatch = useDispatch();
-  const start = useSharedValue(screenPosition.center);
-  const offset = useSharedValue(screenPosition.center);
+  const start = useSharedValue(screenPosition.right);
+  const offset = useSharedValue(screenPosition.right);
   const isPressed = useSharedValue(false);
-
   const openDrawer = useSelector(state => state.drawer.openDrawer);
 
+  //updates openDrawer when user swipes to new drawer
+  //Functions needs to be put in wrapper to execute in runOnJS
   const changeDrawerWrapper = arg => {
     dispatch(changeDrawer(arg));
   };
 
-  // sets the position based on nav button click
+  // changes drawer based on NavButton clicks
   useEffect(() => {
-    let newValue;
-    if (openDrawer === 'center') {
-      newValue = screenPosition.center;
-    } else if (openDrawer === 'right') {
-      newValue = screenPosition.right;
+    let newOpenDrawer;
+    if (openDrawer === 'right') {
+      newOpenDrawer = screenPosition.right;
     } else if (openDrawer === 'left') {
-      newValue = screenPosition.center; //changed it as patcjh
+      newOpenDrawer = screenPosition.left; //changed it as patcjh
     }
-    offset.value = newValue;
-    start.value = newValue;
+    offset.value = newOpenDrawer;
+    start.value = newOpenDrawer;
   }, [openDrawer]);
 
-  // controls animation effect
+  // controls animation effects
   const animatedStyles = useAnimatedStyle(() => {
     if (isPressed.value) {
       return {
@@ -73,11 +70,12 @@ const Drawers = () => {
     })
     .onUpdate(e => {
       const translation = start.value + e.translationX;
+
       // blocks far left swipe
       if (translation > screenPosition.left) {
         offset.value = 0;
       }
-      // acceptable range
+      // acceptable range of motion
       if (
         translation < screenPosition.left &&
         translation > screenPosition.right
@@ -93,36 +91,44 @@ const Drawers = () => {
       start.value = offset.value;
     })
     .onFinalize(() => {
-      // lock to left range
-      if (offset.value > screenTransitions.leftCenter) {
-        offset.value = screenPosition.left;
-        start.value = screenPosition.left;
-        runOnJS(changeDrawerWrapper)('left');
+      // Determine which drawer is open and perform necessary actions based on offset value
+      if (openDrawer === 'right') {
+        if (offset.value >= screenTransition.whenRightDrawerOpen) {
+          // lock to left drawer
+          offset.value = screenPosition.left;
+          start.value = screenPosition.left;
+          runOnJS(changeDrawerWrapper)('left');
+        } else if (offset.value < screenTransition.whenRightDrawerOpen) {
+          // lock to right drawer
+          offset.value = screenPosition.right;
+          start.value = screenPosition.right;
+          runOnJS(changeDrawerWrapper)('right');
+        }
       }
-      // lock to center range
-      if (
-        offset.value < screenTransitions.leftCenter &&
-        offset.value > screenTransitions.centerRight
-      ) {
-        offset.value = screenPosition.center;
-        start.value = screenPosition.center;
-        runOnJS(changeDrawerWrapper)('center');
+      if (openDrawer === 'left') {
+        if (offset.value >= screenTransition.whenLeftDrawerOpen) {
+          // lock to left drawer
+          offset.value = screenPosition.left;
+          start.value = screenPosition.left;
+          runOnJS(changeDrawerWrapper)('left');
+        } else if (offset.value < screenTransition.whenLeftDrawerOpen) {
+          // lock to right drawer
+          offset.value = screenPosition.right;
+          start.value = screenPosition.right;
+          runOnJS(changeDrawerWrapper)('right');
+        }
       }
-      // lock to right range
-      if (offset.value < screenTransitions.centerRight) {
-        offset.value = screenPosition.right;
-        start.value = screenPosition.right;
-        runOnJS(changeDrawerWrapper)('right');
-      }
+
       isPressed.value = false;
     });
   return (
     <GestureDetector gesture={gesture}>
-      <Animated.View style={[DrawerStyles.sectionContainer, animatedStyles]}>
-        <LeftDrawer />
-        <CenterDrawer />
-        <RightDrawer />
-      </Animated.View>
+
+        <Animated.View style={[DrawerStyles.sectionContainer, animatedStyles]}>
+          <LeftDrawer />
+          <RightDrawer />
+        </Animated.View>
+    
     </GestureDetector>
   );
 };

@@ -10,20 +10,48 @@ import Animated, {
   withRepeat,
   Easing,
   cancelAnimation,
+  createAnimatedComponent,
 } from 'react-native-reanimated';
 import {useEffect} from 'react';
+import readSensors from '../utils/Sensors';
 
 const NavButton = ({drawer, icon}) => {
   const dispatch = useDispatch();
+  const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
+
+  // creates glowing border if feedback and isSendingSignal is TRUE
+  const {RotationSensor} = readSensors();
+  const isSendingSignal = useSelector(state => state.bluetooth.isSendingSignal);
+
+  const feedbackStyles = useAnimatedStyle(() => {
+    if (isSendingSignal) {
+      const color = Math.abs(RotationSensor.sensor.value.yaw * 100);
+      
+      return {
+        borderColor: `hsl(${color}, 50%,50%)`,
+        shadowOffset: {width: 0, height: 0},
+        shadowOpacity: 0.5,
+        shadowRadius: 20,
+        elevation: 5,
+        shadowColor: `hsl(${color}, 50%,50%)`,
+      };
+    } else {
+      return {};
+    }
+  });
 
   // creates pulsing effect to guide users to next action
   const opacity = useSharedValue(0);
+  const highlightedButton = useSelector(
+    state => state.appStatus.highlightedButton,
+  );
   const highlightedButtonStyle = useAnimatedStyle(() => {
     return {
-      borderWidth: 4,
+      borderWidth: 2,
       borderColor: `hsla(100, 50%,50%,${opacity.value} )`, // need to find the HSL for '#00c3ff'
     };
   });
+
   useEffect(() => {
     opacity.value = withRepeat(
       withTiming(1, {
@@ -32,22 +60,25 @@ const NavButton = ({drawer, icon}) => {
       }),
       -1,
     );
-    return () => cancelAnimation(opacity);
+    // return () => cancelAnimation(opacity);
   }, []);
 
   const openDrawer = useSelector(state => state.drawer.openDrawer);
 
   return (
-    <Animated.View style={[styles.buttonContainer, highlightedButtonStyle]}>
-      <TouchableOpacity
-        style={[
-          styles.button,
-          openDrawer === drawer ? styles.selectedButton : null,
-        ]}
-        onPress={() => dispatch(changeDrawer(drawer))}>
-        <Icon name={`${icon}`} size={theme.iconSize.medium} color="white" />
-      </TouchableOpacity>
-    </Animated.View>
+    <AnimatedTouchable
+      style={[
+        styles.button,
+        openDrawer === drawer ? styles.selectedButton : null,
+        //button blinks if app status directs user to that drawer
+        highlightedButton === drawer && openDrawer !== drawer
+          ? highlightedButtonStyle
+          : null,
+        feedbackStyles,
+      ]}
+      onPress={() => dispatch(changeDrawer(drawer))}>
+      <Icon name={`${icon}`} size={theme.iconSize.medium} color="white" />
+    </AnimatedTouchable>
   );
 };
 
@@ -74,16 +105,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 40,
-    maxWidth: 70,
-    height: 70,
+    // maxWidth: '%80',
+    // height: '%80',
     // backgroundColor: 'red',
   },
   button: {
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'black',
-    width: 70,
-    height: 70,
+    width: theme.componentRatios.navButton,
+    height: theme.componentRatios.navButton,
     borderRadius: 40,
     marginHorizontal: 20,
     shadowOffset: {width: 0, height: 0},
@@ -94,7 +125,7 @@ const styles = StyleSheet.create({
   },
   selectedButton: {
     backgroundColor: '#3B3B3D',
-    shadowOpacity: 0.7,
+    shadowOpacity: 0.8,
     shadowRadius: 15,
     borderWidth: 2,
     borderColor: '#00c3ff',

@@ -2,6 +2,13 @@ import {useEffect, useState} from 'react';
 import {Text, TouchableOpacity, StyleSheet} from 'react-native';
 import theme from '../styles/theme';
 import {listItemStyles} from '../styles/listItemStyles';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import readSensors from '../utils/Sensors';
+import {useSelector} from 'react-redux';
+import Animated, {useAnimatedStyle} from 'react-native-reanimated';
+//serves as foundation for devices lists, purchase boxes, and item selectors
+
+//may be adding too much functionality, can this fuck with perforamnce?
 export const ListItem = ({
   item,
   type,
@@ -10,53 +17,124 @@ export const ListItem = ({
   title,
   status,
   center,
+  activeOpacity,
+  icon,
+  fontColor,
+  feedback,
 }) => {
-  const [conditionalStyles, setConditionalStyles] = useState({});
+  const [conditionalContainerStyles, setConditionalContainerStyles] = useState(
+    {},
+  );
+  const [conditionalTextStyle, setConditionalTextStyles] = useState({});
 
+  // creates glowing border if feedback and isSendingSignal is TRUE
+  const {RotationSensor} = readSensors();
+  const isSendingSignal = useSelector(state => state.bluetooth.isSendingSignal);
+  const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
+
+  const feedbackStyles = useAnimatedStyle(() => {
+    if (feedback) {
+      if (isSendingSignal) {
+        const color = Math.abs(RotationSensor.sensor.value.yaw * 100);
+        return {
+          borderColor: `hsl(${color}, 50%,50%)`,
+        };
+      } else {
+        if (status === 'selected') {
+          return {
+            borderColor: theme.colors.primaryBorder,
+          };
+        }
+        if (status === 'neutral') {
+          return {
+            borderColor: theme.colors.secondaryBorder,
+          };
+        } else {
+          return {};
+        }
+      }
+    } else {
+      return {};
+    }
+  });
+
+  //sets the styles based on props
   useEffect(() => {
-    let newStyles = {};
+    let newContainerStyles = {};
+    let newTextStyles = {};
+    if (type === 'purchase') {
+      newContainerStyles = {
+        ...newContainerStyles,
+        borderStyle: 'dashed',
+        flexDirection: 'row',
+        alignItems: 'center',
 
+        // marginBottom: 100,
+      };
+      newTextStyles = {
+        color: 'grey',
+      };
+    }
     if (center) {
-      newStyles = {alignItems: 'center'};
+      newContainerStyles = {
+        ...newContainerStyles,
+        alignItems: 'center',
+        justifyContent: 'center',
+      };
     }
     if (status === 'pending') {
-      newStyles = {...newStyles, ...listItemStyles.pendingStyle}
-   
+      newContainerStyles = {
+        ...newContainerStyles,
+        ...listItemStyles.pendingStyle,
+      };
     } else if (status === 'selected') {
-      newStyles = {...newStyles, ...listItemStyles.selectedStyle}
-   
+      newContainerStyles = {
+        ...newContainerStyles,
+        ...listItemStyles.selectedStyle,
+      };
     } else {
-      newStyles = {...newStyles, ...listItemStyles.neutralStyle}
-  
+      newContainerStyles = {
+        ...newContainerStyles,
+        ...listItemStyles.neutralStyle,
+      };
     }
-    setConditionalStyles(newStyles);
+    setConditionalContainerStyles(newContainerStyles);
+    setConditionalTextStyles(newTextStyles);
   }, [status]);
 
+  // if
   return (
-    <TouchableOpacity
+    <AnimatedTouchable
       onPress={onPress}
-      activeOpacity={0.5}
-      style={[styles.item, conditionalStyles]}>
-      <Text numberOfLines={1} ellipsizeMode="tail" style={styles.title}>
+      activeOpacity={activeOpacity}
+      style={[styles.item, conditionalContainerStyles, feedbackStyles]}>
+      <Text
+        numberOfLines={1}
+        ellipsizeMode="tail"
+        style={[styles.title, conditionalTextStyle]}>
         {type === 'bluetooth'
           ? item.name
             ? item.name
             : item.id
-          : type === 'mode'
+          : type === 'mode' || type === 'purchase'
           ? title
           : null}
       </Text>
-      <Text style={styles.subtitle}>{subtitle}</Text>
-    </TouchableOpacity>
+      {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+      {/* {icon ? (
+        <Icon
+          style={styles.icon}
+          name={icon}
+          size={theme.iconSize.medium}
+          color="white"
+        />
+      ) : null} */}
+    </AnimatedTouchable>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    // padding: 50,
-    flex: 1,
-    backgroundColor: '#1B1B1B',
-  },
+  icon: {margin: 20},
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -70,12 +148,11 @@ const styles = StyleSheet.create({
   },
   item: {
     minWidth: '100%',
+    height: 100,
     padding: 10,
     fontSize: 15,
     borderWidth: 2,
-    // alignItems: 'center',
-    // backgroundColor: '#1C1C1E',
-    marginBottom: 10,
+
     borderRadius: 10,
   },
 });
