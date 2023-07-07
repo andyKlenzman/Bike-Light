@@ -1,17 +1,16 @@
-import {initalState} from '../initialState';
+import {initalState} from '../config/initialState';
 import {createSlice} from '@reduxjs/toolkit';
-import {incrementThroughObject} from '../../utils/incrementThroughObject';
-import {decrementThroughObject} from '../../utils/decrementThroughObject';
+import {changeMode} from '../../utils/changeMode';
 
 export const lightModeSlice = createSlice({
   name: 'lightMode',
   initialState: initalState.lightMode,
   reducers: {
     incrementLightMode(state, action) {
-      incrementThroughObject(state);
+      changeMode(state, 'increment');
     },
     decrementLightMode(state, action) {
-      decrementThroughObject(state);
+      changeMode(state, 'decrement');
     },
   },
   // extraReducers: {}, //using builder callback from now on

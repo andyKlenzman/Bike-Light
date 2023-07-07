@@ -50,7 +50,6 @@ const styles = StyleSheet.create({
     height: 100,
     justifyContent: 'center',
     alignItems: 'center',
-    // backgroundColor: 'green',
     zIndex: 7,
     opacity: 0.5,
   },

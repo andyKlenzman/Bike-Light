@@ -1,10 +1,7 @@
 import {useEffect, useState} from 'react';
 import {Text, TouchableOpacity, StyleSheet} from 'react-native';
 import theme from '../styles/theme';
-import {listItemStyles} from '../styles/listItemStyles';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import readSensors from '../utils/Sensors';
-import {useSelector} from 'react-redux';
 import Animated, {useAnimatedStyle} from 'react-native-reanimated';
 //serves as foundation for devices lists, purchase boxes, and item selectors
 import {Linking} from 'react-native';
@@ -43,19 +40,19 @@ export const PurchaseTile = ({}) => {
     return (
       <AnimatedTouchable activeOpacity={1} style={[styles.item, itemStyles]}>
         <TouchableOpacity
-          style={[styles.icons, styles.iconRight]}
+          style={[styles.icons, styles.iconLeft]}
           onPress={() => {
-            Linking.openURL('https://tshare.family');
+            Linking.openURL('https://tshare.family/view/0');
           }}>
           <Icon name="check" size={theme.iconSize.medium} color="green" />
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.icons, styles.iconLeft]}
+          style={[styles.icons, styles.iconRight]}
           onPress={() => setIsActive(false)}>
           <Text style={styles.iconRight}>X</Text>
         </TouchableOpacity>
-        <Text style={[styles.title, textStyles]}>Open browser?</Text>
+        <Text style={[styles.title, textStyles]}>Open shop?</Text>
       </AnimatedTouchable>
     );
   } else {
@@ -67,7 +64,7 @@ export const PurchaseTile = ({}) => {
         activeOpacity={0.3}
         style={[styles.item]}>
         <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.title]}>
-          + add lights
+          + buy lights
         </Text>
       </AnimatedTouchable>
     );
@@ -75,11 +72,10 @@ export const PurchaseTile = ({}) => {
 };
 
 const styles = StyleSheet.create({
-  icon: {margin: 20},
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: 'grey',
+    color: 'white',
     marginTop: 10,
   },
   subtitle: {
@@ -98,6 +94,7 @@ const styles = StyleSheet.create({
     borderColor: 'grey',
     flexDirection: 'row',
     alignItems: 'center',
+    alignContent: 'center',
 
     borderRadius: 10,
   },
@@ -105,20 +102,22 @@ const styles = StyleSheet.create({
   icons: {
     position: 'absolute',
     zIndex: 2,
-    top: '10%',
 
     padding: 30,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 40,
+  },
+  iconLeft: {
+    left: '0%',
+    top: '5%',
   },
   iconRight: {
-    left: '0%',
+    left: '70%',
+    top: '0%',
+
     color: 'red',
     fontSize: theme.iconSize.medium,
     fontWeight: 900,
-    marginBottom: 20,
-  },
-  iconLeft: {
-    left: '80%',
   },
 });

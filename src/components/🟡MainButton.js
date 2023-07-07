@@ -23,7 +23,7 @@ const MainButton = () => {
 
   // light mode to be passed as prop to startBluetoothCommunication
   const lightModeKey = useSelector(selectActiveLightModeKey);
-
+  let lightModeKeyVar = lightModeKey;
   // Data used to send information to bluetooth are used to pass to send data to bluetooth
   const {
     RotationSensor,
@@ -40,9 +40,19 @@ const MainButton = () => {
       backgroundColor: `hsl(${color}, 50%,50%)`,
     };
   });
-  useEffect(() => {
-    console.log('hey', lightModeKey);
-  }, [lightModeKey]);
+  // useEffect(() => {
+  //   startBluetoothCommunication(
+  //     dispatch,
+  //     lightModeKeyVar,
+  //     connectedDevices,
+  //     RotationSensor,
+  //     AccelerometerSensor,
+  //     GyroscopeSensor,
+  //     GravitySensor,
+  //     MagneticSensor,
+  //   );
+  //   return;
+  // }, [lightModeKey]);
 
   const disabledButtonStyle = {
     backgroundColor: theme.colors.disabledMainButton,

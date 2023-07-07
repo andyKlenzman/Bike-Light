@@ -3,6 +3,5 @@ export const selectActiveInteractionMode = state => {
   const activeInteractionMode = Object.keys(selectInteractionMode).find(
     key => selectInteractionMode[key].isActive,
   );
-  console.log()
   return activeInteractionMode;
 };

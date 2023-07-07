@@ -1,4 +1,4 @@
-import {initalState} from '../initialState';
+import {initalState} from '../config/initialState';
 import {createSlice} from '@reduxjs/toolkit';
 export const drawerSlice = createSlice({
   name: 'drawer',

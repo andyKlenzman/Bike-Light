@@ -1,4 +1,4 @@
-import {initalState} from '../initialState';
+import {initalState} from '../config/initialState';
 import {
   createSlice,
   createAsyncThunk,
@@ -6,7 +6,6 @@ import {
   createReducer,
 } from '@reduxjs/toolkit';
 import {bleManager} from '../../utils/Bluetooth/bluetoothManager';
-
 
 export const fetchBluetoothState = createAsyncThunk(
   'bluetooth/fetchBluetoothState',

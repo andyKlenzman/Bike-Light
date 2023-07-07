@@ -4,9 +4,13 @@ import {bluetoothReducer} from './slices/bluetoothSlice';
 import {appStatusReducer} from './slices/appStatusSlice';
 import {interactionModeReducer} from './slices/interactionModeSlice';
 import {lightModeReducer} from './slices/lightModeSlice';
+import {curtainReducer} from './slices/curtainSlice';
+
+
 export const store = configureStore({
   reducer: {
     drawer: drawerReducer,
+    curtain: curtainReducer,
     bluetooth: bluetoothReducer,
     appStatus: appStatusReducer,
     interactionMode: interactionModeReducer,

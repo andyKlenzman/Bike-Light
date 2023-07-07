@@ -1,8 +1,7 @@
-import {initalState} from '../initialState';
+import {initalState} from '../config/initialState';
 import {createSlice} from '@reduxjs/toolkit';
 
-
-// determines 
+// determines
 export const appStatusSlice = createSlice({
   name: 'appStatus',
   initialState: initalState.appStatus,

@@ -9,28 +9,41 @@ Principles
 -- code is like simplifying a philosophy paper to make it air tight and understandable
 -- test current data structure before iterating to more complicated modes. IT IS THE KEY OF THIS APP!!!! It should be fucking easy to change this thing.
 -- computed values for how modes influence data transofmation file. Should have to update two files to add a new feature (the feature itself and central data file that takes care of the rest)
+-- is complexity in the selectors or in the reducers.
+-- software is like glass, and once you set your foundations in glass, you can't go drilling holes at the bottom.
 
-Things to test:
--- fix data selectors for new data structure (This shows why need to get this right. It is a pain to make a change now, start small and work over a long period of time.)
--- light mode key (does new structure fuck up ability to read modes? consider all data structures and how they will propogate across app. Want all mode data structures to be the same. This is the problem of tshare as well. )
--- data structure being sent over BT
-
+FINAL ITEMS
 Doing:
--- fix data selectors
 -- create curtain
 
-UI:
--- Intro
--- One new mode
--- Etsy shop
 
-FUNCTIONALITY:
---persistent data of connectedDev
---background mode performance
--- dynamic data reading (array length)
+FEATURES:
+-- Curtain (will need a slice)
+-- Screen Lock
+-- Introduction w/ tutorial (graphics can be used for portfolio) / persist data to show only once?
+-- question mark
+-- Etsy shop
+-- Unify data struc
+-- cache if user has seen intro.
+
+BUGS
+-- Fix frozen spinner on render
+-- fix styles of purchase tile
+-- transition bugs Modes
+-- make scanning tile larger
+
+BEFORE REVIEW
+-- delete console logs
+-- clean up code for github
+-- make logo and descriptions
 
 AFTER MVP
 UI
+--  click shut when screen is locked with animation that turns screen B/W
+--feedback on disconnect in UI
+-- option to cancel connection if it is taking too long (i always wished apple had this.)
+-- can animate locked screen with a light color. Accidently figured out the style
+-- select and animate certain parts of the light strip.
 -- animate gradient top of screen
 -- add more icons (ICON ABOVE EACH MODE)
 -- purchase animation and link
@@ -52,9 +65,11 @@ FUNCTIONALITY
 --smoothing functions
 -- multi-BT functionality
 -- color modes.
---Background mode options (replay, stick on one color, default mode) KISS THO
+-- Background mode options (replay, stick on one color, default mode) KISS THO
+-- dynamic data sending and parsing (use different sensors)
 
 DATA ORGANIZATION
+-- make a decision about consistent data structures.
 -- computed values for how modes influence data transofmation file. Should have to update two files to add a new feature (the feature itself and central data file that takes care of the rest)
 -- Each variable should be defined in the same way and have same data structure
 -- centralize string variables - mode, bluetooth, purchase in list item and where component is called.
@@ -70,3 +85,5 @@ LT NOTES
 -- if background is impossible, could lock screen or do pocket mode and somehow keep screen on, just so it is easier to use,
 -- task identifier can extend background over 15 minutes https://developer.apple.com/documentation/foundation/nsurlsessiontask/1411231-taskidentifier
 -- may not be able to get this thing to run in background, atleast on iOS. Could interval large data transfers that can run on for awhile...
+-- the curtainState file is a solution to modeState, could have one variable in the state, then use reducers to move through the data sets in the state files.
+-- I wonder if typeScript will solve problems with variables and multiple sources of truth

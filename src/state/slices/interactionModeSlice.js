@@ -1,6 +1,6 @@
-import {initalState} from '../initialState';
+import {initalState} from '../config/initialState';
 import {createSlice} from '@reduxjs/toolkit';
-import {incrementThroughObject} from '../../utils/incrementThroughObject';
+import {incrementThroughObject} from '../../utils/changeMode';
 import {decrementThroughObject} from '../../utils/decrementThroughObject';
 
 export const interactionModeSlice = createSlice({

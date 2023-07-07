@@ -31,7 +31,7 @@ const PlaceholderItem = () => {
 
   const shimmerOpacity = shimmerAnimation.interpolate({
     inputRange: [0, 0.5, 1],
-    outputRange: [0.16, 0.3, 0.16],
+    outputRange: [0.16, 0.5, 0.16],
   });
 
   return (
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     opacity: 1,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: 'grey',
+    borderColor: 'white',
   },
 });
 

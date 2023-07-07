@@ -5,14 +5,12 @@ import Animated, {
   withTiming,
   withRepeat,
   Easing,
-  cancelAnimation,
 } from 'react-native-reanimated';
 import {useSharedValue} from 'react-native-reanimated';
 import {useEffect} from 'react';
 import theme from '../styles/theme';
 import {useSelector} from 'react-redux';
 import readSensors from '../utils/Sensors';
-import {appStatusCodes} from '../content/appStatusCodes';
 
 export const BannerText = () => {
   const {RotationSensor} = readSensors();
