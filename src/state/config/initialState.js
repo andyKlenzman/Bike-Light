@@ -1,4 +1,6 @@
-import {curtainState} from './curtainState';
+// This file is the inital config for the redux state.
+
+import {curtainVals} from './curtainState';
 
 export const initalState = {
   appStatus: {
@@ -6,7 +8,7 @@ export const initalState = {
     highlightedButton: '',
   },
   interactionMode: {
-    // if I pull the complexity of this data structure into a interactionModeState file, I could possibly share it directly with my microcontroller and have one source of truth for both codebases, and also eliminate the possibility of two modes being selected active at once.
+    // if I pull the complexity of this data structure into an interactionModeState file--similar to curtainState--I could share it with my microcontroller, creating one source of truth for mode names to key mappings.
     freeplay: {isActive: true, key: 0},
     replay: {isActive: false, key: 1},
     record: {isActive: false, key: 2},
@@ -19,8 +21,8 @@ export const initalState = {
     openDrawer: 'right',
   },
   curtain: {
-    isOpen: curtainState.isOpen.hidden,
-    contentType: curtainState.contentType.tutorial,
+    position: curtainVals.coordinates.closed,
+    contentType: curtainVals.content.screenLock,
   },
   bluetooth: {
     isBluetoothOn: 'PoweredOff', //correct wording

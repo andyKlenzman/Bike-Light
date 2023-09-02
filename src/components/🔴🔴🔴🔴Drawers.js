@@ -1,3 +1,5 @@
+// This file handles the behavior of the drawers (left and right), including the ability to swipe between them and to change which drawer is showing based on the appStatus set by the navButtons
+
 import RightDrawer from './🟣🟣🟣RightDrawer';
 import LeftDrawer from './🟣🟣🟣LeftDrawer';
 import {useDispatch, useSelector} from 'react-redux';
@@ -64,6 +66,7 @@ const Drawers = () => {
     }
   });
 
+  // handles how the touch functionality behaves for the drawers.
   const gesture = Gesture.Pan()
     .onBegin(() => {
       isPressed.value = true;
@@ -123,12 +126,10 @@ const Drawers = () => {
     });
   return (
     <GestureDetector gesture={gesture}>
-
-        <Animated.View style={[DrawerStyles.sectionContainer, animatedStyles]}>
-          <LeftDrawer />
-          <RightDrawer />
-        </Animated.View>
-    
+      <Animated.View style={[DrawerStyles.sectionContainer, animatedStyles]}>
+        <LeftDrawer />
+        <RightDrawer />
+      </Animated.View>
     </GestureDetector>
   );
 };

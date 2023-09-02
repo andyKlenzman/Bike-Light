@@ -14,7 +14,6 @@ export const PurchaseTile = ({}) => {
   const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 
   const feedbackStyles = useAnimatedStyle(() => {
-    console.log(isActive);
     if (isActive) {
       return {
         justifyContent: 'center',
@@ -75,7 +74,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: 'white',
+    color: 'grey',
     marginTop: 10,
   },
   subtitle: {

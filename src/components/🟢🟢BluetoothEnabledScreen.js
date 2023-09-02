@@ -1,15 +1,19 @@
-import {Text, View, StyleSheet, FlatList} from 'react-native';
-import {useEffect, useState} from 'react';
-import EmptyList from './🟡EmptyList';
+// This file is rendered when bluetooth is enabled in the app on the bluetooth drawer. It is the parent file that houses the facilitation of the connection with the bluetooth device and provides user feedback to guide them through the process. 
+
+
+import {View, StyleSheet, FlatList} from 'react-native';
+import {useEffect} from 'react';
 import {RenderScannedBluetoothItem} from './🟢🟢RenderScannedBluetoothItem';
 import {bleManager} from '../utils/Bluetooth/bluetoothManager';
 import {startDeviceScan} from '../utils/Bluetooth/startDeviceScan';
 import {useDispatch, useSelector} from 'react-redux';
 import {setScannedDevices} from '../state/slices/bluetoothSlice';
-import {ListItem} from './🟡ListItem';
 import ItemSeperator from './🟡ItemSeperator';
 import PlaceholderItem from './PlaceholderItem';
-import { PurchaseTile } from './🟡PurchaseTile';
+import {PurchaseTile} from './🟡PurchaseTile';
+
+
+
 export const BluetoothEnabledScreen = () => {
   const dispatch = useDispatch();
   const scannedDevices = useSelector(state => state.bluetooth.scannedDevices);

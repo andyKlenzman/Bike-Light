@@ -1,3 +1,6 @@
+// this file is the central button in the navbar. It shows active styles when the buetooth device is connected, and is the parent file for facilitating essentual functions like sending datat to the bluetooth device
+
+
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useDispatch, useSelector} from 'react-redux';
@@ -9,7 +12,6 @@ import {
 import Animated, {useAnimatedStyle} from 'react-native-reanimated';
 import {selectActiveLightModeKey} from '../state/selectors/lightMode/selectActiveLightModeKey';
 import theme from '../styles/theme';
-import {useEffect} from 'react';
 
 const MainButton = () => {
   const dispatch = useDispatch();
@@ -23,7 +25,7 @@ const MainButton = () => {
 
   // light mode to be passed as prop to startBluetoothCommunication
   const lightModeKey = useSelector(selectActiveLightModeKey);
-  let lightModeKeyVar = lightModeKey;
+
   // Data used to send information to bluetooth are used to pass to send data to bluetooth
   const {
     RotationSensor,
@@ -36,23 +38,12 @@ const MainButton = () => {
   // creates multicolored effect for play button
   const activeButtonStyle = useAnimatedStyle(() => {
     const color = Math.abs(RotationSensor.sensor.value.yaw * 100);
+
     return {
       backgroundColor: `hsl(${color}, 50%,50%)`,
+      // backgroundColor: theme.colors.primaryBorder,
     };
   });
-  // useEffect(() => {
-  //   startBluetoothCommunication(
-  //     dispatch,
-  //     lightModeKeyVar,
-  //     connectedDevices,
-  //     RotationSensor,
-  //     AccelerometerSensor,
-  //     GyroscopeSensor,
-  //     GravitySensor,
-  //     MagneticSensor,
-  //   );
-  //   return;
-  // }, [lightModeKey]);
 
   const disabledButtonStyle = {
     backgroundColor: theme.colors.disabledMainButton,

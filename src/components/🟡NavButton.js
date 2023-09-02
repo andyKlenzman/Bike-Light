@@ -1,3 +1,5 @@
+// reusbale component for the navbuttons found on the bottom of the screen.
+
 import {StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useDispatch, useSelector} from 'react-redux';
@@ -9,8 +11,7 @@ import Animated, {
   useSharedValue,
   withRepeat,
   Easing,
-  cancelAnimation,
-  createAnimatedComponent,
+
 } from 'react-native-reanimated';
 import {useEffect} from 'react';
 import readSensors from '../utils/Sensors';
@@ -26,7 +27,7 @@ const NavButton = ({drawer, icon}) => {
   const feedbackStyles = useAnimatedStyle(() => {
     if (isSendingSignal) {
       const color = Math.abs(RotationSensor.sensor.value.yaw * 100);
-      
+
       return {
         borderColor: `hsl(${color}, 50%,50%)`,
         shadowOffset: {width: 0, height: 0},
@@ -36,7 +37,9 @@ const NavButton = ({drawer, icon}) => {
         shadowColor: `hsl(${color}, 50%,50%)`,
       };
     } else {
-      return {};
+      return {
+        borderColor: theme.colors.primaryBorder,
+      };
     }
   });
 
@@ -117,6 +120,7 @@ const styles = StyleSheet.create({
     height: theme.componentRatios.navButton,
     borderRadius: 40,
     marginHorizontal: 20,
+
     shadowOffset: {width: 0, height: 0},
     shadowOpacity: 0.5,
     shadowRadius: 20,
@@ -130,7 +134,5 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#00c3ff',
   },
-  disabledButton: {
-    backgroundColor: 'yellow',
-  },
+  disabledButton: {},
 });

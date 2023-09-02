@@ -1,6 +1,71 @@
+Doing:
+-- making curtain code more readable
+  1) Fix the final details for the curtain
+  2) get screen lock to work
+  3) 
+
+
+Go piece by piece
+
+Smooth animation depends on if statements/ switch case inside of the Animated styles panel
+
+
+-- you know, I might be able to reduce a lot of complexity by not putting everything in the same curtain....ugh but ive come so far already. 
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///
+FEATURES:
+-- Etsy shop
+-- cache if user has seen intro
+
+BUGS
+-- Fix frozen spinner on render
+-- transition mode bugs
+
+BEFORE REVIEW
+-- clean up code for github
+-- make logo and descriptions
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///
+///
 Principles
 -- Have a vision, sharpen it, iterate it
--- refactor your code, make it audrey lorde readable
+-- refactor your code, make it audrey lorde readable (whats that book about refctoring??)
 -- Goal is to get a dollar from a stranger / job / have fun
 -- "hit the user on the head" UI Features
 -- Bic lighter is inspiration (the button getting colorful is sparks, led turning on is flame)
@@ -11,35 +76,15 @@ Principles
 -- computed values for how modes influence data transofmation file. Should have to update two files to add a new feature (the feature itself and central data file that takes care of the rest)
 -- is complexity in the selectors or in the reducers.
 -- software is like glass, and once you set your foundations in glass, you can't go drilling holes at the bottom.
-
-FINAL ITEMS
-Doing:
--- create curtain
-
-
-FEATURES:
--- Curtain (will need a slice)
--- Screen Lock
--- Introduction w/ tutorial (graphics can be used for portfolio) / persist data to show only once?
--- question mark
--- Etsy shop
--- Unify data struc
--- cache if user has seen intro.
-
-BUGS
--- Fix frozen spinner on render
--- fix styles of purchase tile
--- transition bugs Modes
--- make scanning tile larger
-
-BEFORE REVIEW
--- delete console logs
--- clean up code for github
--- make logo and descriptions
+-- with the question button, choosing ugly functional
 
 AFTER MVP
 UI
---  click shut when screen is locked with animation that turns screen B/W
+-- 1/2/3 hookup user flow, prevents what happened with max, who disconnected from the device. Not bad I guess in the moment, but could be better.
+-- can probably only have three curtain modes, KISS
+-- Unify data struc
+-- instead of move, have it be a swirling wave or something , or a phone icon going back and forth, show not tell.
+-- click shut when screen is locked with animation that turns screen B/W
 --feedback on disconnect in UI
 -- option to cancel connection if it is taking too long (i always wished apple had this.)
 -- can animate locked screen with a light color. Accidently figured out the style
@@ -87,3 +132,8 @@ LT NOTES
 -- may not be able to get this thing to run in background, atleast on iOS. Could interval large data transfers that can run on for awhile...
 -- the curtainState file is a solution to modeState, could have one variable in the state, then use reducers to move through the data sets in the state files.
 -- I wonder if typeScript will solve problems with variables and multiple sources of truth
+-- there is a tension between having data strcutures based on keys and readable meaningful ones, can you have both.
+
+CRITISISM
+-- Most repetitive/cluttered/convoluted part of this code is the styling: both the responsive colors throughout componenets and the drawer/sliding mechanics. How can I store repetitive useAnimatedStyles in a singular file without violating the rule of hooks that they need to be used in the base of a component.
+-- Probably could have used React Navigation (forget why I didnt in the first place), and could have abstracted a lot of the insane gesture handling cluttering up the components.

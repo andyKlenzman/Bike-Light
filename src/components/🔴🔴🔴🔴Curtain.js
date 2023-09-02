@@ -1,9 +1,8 @@
-import {View, StyleSheet, Text} from 'react-native';
-import {DrawerStyles} from '../styles/DrawerStyles';
-import BluetoothPairing from './🟢🟢RenderBluetoothScreen';
+// This file handles the conditional rendering, gesture control, positioning, and content of the curtain feature.
+
+import {StyleSheet, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useEffect} from 'react';
-import {ListItem} from './🟡ListItem';
 import theme from '../styles/theme';
 import {Dimensions} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -14,156 +13,199 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import {GestureDetector, Gesture} from 'react-native-gesture-handler';
-import {curtainState} from '../state/config/curtainState';
-import {changeCurtainState} from '../state/slices/curtainSlice';
+import {curtainVals} from '../state/config/curtainState';
+import {
+  changeCurtainState,
+  changeCurtainContent,
+} from '../state/slices/curtainSlice';
+import readSensors from '../utils/Sensors';
+import Tutorial from './🟢🟢Tutorial';
+import FAQs from './🟢🟢FAQs';
 
 export const Curtain = () => {
   const dispatch = useDispatch();
   const screenHeight = -Dimensions.get('window').height;
+  const {RotationSensor} = readSensors();
 
-  const screenPosition = {
-    hidden: screenHeight,
-    peeking: screenHeight * 0.7,
-    partiallyOpen: theme.componentRatios.drawers,
-    fullyOpen: 0,
-  };
-  const screenTransition = {
-    whenHidden: screenHeight * 0.6,
-    whenOpen: screenHeight * 0.5,
-  };
+  // Selectors from redux state
+  const isSendingSignal = useSelector(state => state.bluetooth.isSendingSignal);
+  const contentType = useSelector(state => state.curtain.contentType);
+  const curtainPosition = useSelector(state => state.curtain.position);
 
-  //in retrospect, these value should be paired since they are so frequently updated in tendem
-  const start = useSharedValue(screenPosition.hidden);
-  const offset = useSharedValue(screenPosition.hidden);
+  // Constants for the content of the Curtain
+  //change this to one value and use a switch case
+  const isTutorial = contentType === curtainVals.content.tutorial;
+  const isFAQ = contentType === curtainVals.content.faq;
+  const isLocked = contentType === curtainVals.content.screenLock;
+  const start = useSharedValue(curtainVals.coordinates.closed);
+  const offset = useSharedValue(curtainVals.coordinates.closed);
   const isPressed = useSharedValue(false);
 
-  const curtainPosition = useSelector(state => state.curtain.isOpen);
-  const isSendingSignal = useSelector(state => state.bluetooth.isSendingSignal);
+  // constants that read application state, and will later be used to  conditionally render the curtain state and style.
+  const isCurtainOpen = curtainPosition === curtainVals.state.open;
+  const isCurtainPeeking = curtainPosition === curtainVals.state.peeking;
 
-  // wrapper required for runOnJS function
-  const changeCurtainWrapper = arg => {
-    console.log(arg);
+  ////////////////////
+  ////////////////////
+  ////////////////////
+  ////////////////////
+  //STATE HANDLER
+  ////////////////////
+  ////////////////////
+  ////////////////////
+  ////////////////////
+
+  // Sets the coordinates and the position of the curtain based on the app state.
+  useEffect(() => {
+    let newCoordinates;
+    let newState;
+
+    if (isSendingSignal) {
+      switch (curtainPosition) {
+        case curtainVals.state.open:
+          newCoordinates = curtainVals.coordinates.open;
+          newState = curtainVals.state.open;
+          break;
+        default:
+          newCoordinates = curtainVals.coordinates.peeking;
+          newState = curtainVals.state.peeking;
+      }
+    } else {
+      newCoordinates = curtainVals.coordinates.closed;
+      newState = curtainVals.state.closed;
+    }
+
+    dispatch(changeCurtainState(newState));
+    start.value = offset.value = newCoordinates;
+  }, [curtainPosition, isSendingSignal]);
+
+  ////////////////////
+  ////////////////////
+  ////////////////////
+  ////////////////////
+  //GESTURE HANDLER
+  ////////////////////
+  ////////////////////
+  ////////////////////
+  ////////////////////
+
+  const changeCurtainStateWrapper = arg => {
     dispatch(changeCurtainState(arg));
   };
 
-  // cha
-  useEffect(() => {
-    let newCurtainLocation;
-    // if sending lights, show the pull down menu for locking the screen, and return to peeking if the person stops playing.
-    if (isSendingSignal && curtainPosition !== curtainState.isOpen.fullyOpen) {
-      newCurtainLocation = screenPosition.peeking;
-      dispatch(changeCurtainState(curtainState.isOpen.peeking));
-    } else if (!isSendingSignal) {
-      newCurtainLocation = screenPosition.hidden;
-    } else if (curtainPosition === curtainState.isOpen.closed) {
-      // newOpenDrawer = screenPosition.right;
-    } else if (curtainPosition === curtainState.isOpen.peeking) {
-      newCurtainLocation = screenPosition.peeking;
-    } else if (curtainPosition === curtainState.isOpen.partiallyOpen) {
-    } else if (curtainPosition === curtainState.isOpen.fullyOpen) {
-      newCurtainLocation = screenPosition.fullyOpen;
-    }
-    offset.value = newCurtainLocation;
-    start.value = newCurtainLocation;
-  }, [curtainPosition, isSendingSignal]);
-
-  // controls animation effects
-  const animatedStyles = useAnimatedStyle(() => {
-    if (isPressed.value) {
-      return {
-        transform: [{translateY: offset.value}],
-      };
-    } else {
-      return {
-        transform: [{translateY: withTiming(offset.value, {duration: 100})}],
-      };
-    }
-  });
-
-  // this code is very long and hard to read. A lot of this could be abstracted.
   const gesture = Gesture.Pan()
     .onBegin(() => {
       isPressed.value = true;
     })
     .onUpdate(e => {
       const translation = start.value + e.translationY;
-      offset.value = e.translationY + start.value;
-      console.log(translation, offset.value, start.value, screenHeight);
-      // blocks swiping too far down
-      if (translation > screenPosition.hidden) {
-        offset.value = screenPosition.fullyOpen;
-      }
-      // acceptable range of motion
-      if (translation < 0 && translation > screenHeight) {
-        offset.value = e.translationY + start.value;
-      }
-      //blocks swiping too far up
-      if (translation < screenHeight) {
-        offset.value = screenPosition.hidden;
-      }
+
+      // Ensure the value stays within the height of the screen
+      const newOffsetValue = Math.min(
+        Math.max(translation, curtainVals.coordinates.closed),
+        screenHeight,
+      );
+      offset.value = newOffsetValue;
     })
     .onEnd(() => {
       start.value = offset.value;
     })
     .onFinalize(() => {
-      // if the curtain is fully open
-      console.log(
-        'ONE FINALIZE',
-        curtainPosition,
-        curtainState.isOpen.fullyOpen,
-      );
-      if (curtainPosition === curtainState.isOpen.fullyOpen) {
-        if (offset.value >= screenTransition.whenOpen) {
-          // lock to bottom
-          offset.value = screenPosition.fullyOpen;
-          start.value = screenPosition.fullyOpen;
-          runOnJS(changeCurtainWrapper)(curtainState.isOpen.fullyOpen);
-        } else if (offset.value < screenTransition.whenOpen) {
-          // or lock it to the peeking state
-          offset.value = screenPosition.peeking;
-          start.value = screenPosition.peeking;
-          runOnJS(changeCurtainWrapper)(curtainState.isOpen.peeking);
+      // faciliates the curtains positions to new locations based on the user's gestures commands
+      let newCoordinates;
+      let newState;
+
+      if (isCurtainOpen) {
+        if (offset.value > curtainVals.transitions.whenOpen) {
+          newCoordinates = curtainVals.coordinates.open;
+          newState = curtainVals.state.open;
+        } else {
+          newCoordinates = curtainVals.coordinates.peeking;
+          newState = curtainVals.state.peeking;
+        }
+      } else if (isCurtainPeeking) {
+        console.log(offset.value, curtainVals.transitions.whenClosed);
+        if (offset.value <= curtainVals.transitions.whenClosed) {
+          newCoordinates = curtainVals.coordinates.peeking;
+          newState = curtainVals.state.peeking;
+        } else {
+          newCoordinates = curtainVals.coordinates.open;
+          newState = curtainVals.state.open;
         }
       }
 
-      // if the curtain is in the 'peeking' position
-      else if (curtainPosition === curtainState.isOpen.peeking) {
-        if (offset.value >= screenTransition.whenHidden) {
-          console.log('RUNNNG TO FULLYOPEN');
-
-          // lock to the fully open position
-          offset.value = screenPosition.fullyOpen;
-          start.value = screenPosition.fullyOpen;
-          runOnJS(changeCurtainWrapper)(curtainState.isOpen.fullyOpen);
-        } else if (offset.value < screenTransition.whenHidden) {
-          // or lock it to the peeking state
-          console.log('RUNNNG TO PEERKING');
-          offset.value = screenPosition.peeking;
-          start.value = screenPosition.peeking;
-          runOnJS(changeCurtainWrapper)(curtainState.isOpen.peeking);
-        }
-      }
-
+      offset.value = start.value = newCoordinates;
+      runOnJS(changeCurtainStateWrapper)(newState);
       isPressed.value = false;
     });
 
+  ////////////////////
+  ////////////////////
+  ////////////////////
+  ////////////////////
+  //ANIMATION STYLES
+  ////////////////////
+  ////////////////////
+  ////////////////////
+  ////////////////////
+
+  // controls touch gesture animation effects
+  const animatedContainerStyles = useAnimatedStyle(() => {
+    let color = Math.abs(RotationSensor.sensor.value.pitch * 100);
+
+    //when the curtain is being touched, movement is instantly reponsive, otherwise it has a smooth effect
+    if (isPressed.value) {
+      return {
+        transform: [{translateY: offset.value}],
+        backgroundColor: `hsla(${color}, 50%,50%, .3)`,
+        borderBottomWidth: 2,
+        borderBottomColor: `hsl(${color}, 100%,50%)`,
+      };
+    } else {
+      return {
+        transform: [{translateY: withTiming(offset.value, {duration: 100})}],
+        backgroundColor: `hsla(${color}, 50%,50%, .3)`,
+        borderBottomWidth: 2,
+        borderBottomColor: `hsl(${color}, 100%,50%)`,
+      };
+    }
+  });
+
+  const animatedTextStyles = useAnimatedStyle(() => {
+    if (isPressed.value) {
+      return {
+        opacity: 0,
+      };
+    } else {
+      return {
+        opacity: 1,
+      };
+    }
+  });
+
   return (
     <GestureDetector gesture={gesture}>
-      <Animated.View style={[styles.container, animatedStyles]}>
-        {curtainPosition === curtainState.isOpen.fullyOpen ? (
-          <Text style={[styles.text]}>SCREEN LOCKED</Text>
-        ) : (
-          <Text style={[styles.text]}>SWIPE TO LOCK SCREEN</Text>
-        )}
-        <Icon
-          size={theme.iconSize.medium}
-          style={styles.icon}
-          name={
-            curtainPosition === curtainState.isOpen.fullyOpen
-              ? 'lock'
-              : 'arrow-down'
-          }
-        />
+      <Animated.View style={[styles.container, animatedContainerStyles]}>
+        {isLocked ? (
+          <View>
+            {isCurtainOpen ? null : (
+              <Animated.Text style={[styles.text, animatedTextStyles]}>
+                SWIPE TO LOCK SCREEN
+              </Animated.Text>
+            )}
+
+            <Icon
+              size={theme.iconSize.medium}
+              style={
+                isCurtainOpen ? styles.fullyOpenIcon : styles.partiallyOpenIcon
+              }
+              name={isCurtainOpen ? 'lock' : 'arrow-down'}
+            />
+          </View>
+        ) : null}
+
+        {isFAQ ? <FAQs /> : null}
+        {isTutorial ? <Tutorial /> : null}
       </Animated.View>
     </GestureDetector>
   );
@@ -179,17 +221,22 @@ const styles = StyleSheet.create({
     zIndex: 1,
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center', // Center horizontally
+    alignItems: 'center',
+    paddingTop: 80,
   },
-
+  iconContainer: {},
   text: {
     fontSize: theme.fontSize.medium,
     fontWeight: 'bold',
     color: theme.colors.primaryFont,
     marginTop: '100%',
   },
-  icon: {
+  partiallyOpenIcon: {
     color: theme.colors.primaryIcon,
     marginTop: 20,
+  },
+  fullyOpenIcon: {
+    color: theme.colors.primaryIcon,
+    marginTop: 0,
   },
 });

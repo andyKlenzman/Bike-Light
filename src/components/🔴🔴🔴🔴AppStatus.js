@@ -1,3 +1,5 @@
+// listens for changes in app state and updates BannerText above the buttons along with other user  feedback systems
+
 import {useSelector, useDispatch} from 'react-redux';
 import {
   setAppStatus,
@@ -7,8 +9,6 @@ import {
 import {appStatusCodes} from '../content/appStatusCodes';
 import {useEffect} from 'react';
 import {BannerText} from './🟡BannerText';
-
-// listens for changes in app state and updates BannerText above the buttons along with other user  feedback systems
 
 const AppStatus = () => {
   const dispatch = useDispatch();

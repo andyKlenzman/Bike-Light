@@ -1,4 +1,6 @@
-import {StyleSheet, Text, View} from 'react-native';
+// This file sets the gradient at the top of the screen.
+
+import {StyleSheet, View} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 const Header = () => {
@@ -6,14 +8,8 @@ const Header = () => {
     <View style={[styles.textContainer]}>
       <LinearGradient
         colors={['blue', 'rgba(0, 0, 0, 0.7)']}
-        style={styles.textContainer}>
-        {/* <Icon
-          name="ceiling-light"
-          size={theme.iconSize.extraLarge}
-          style={styles.text}
-          color={isSendingSignal ? 'white' : '#cccccc'}
-        /> */}
-      </LinearGradient>
+        style={styles.textContainer}
+      />
     </View>
   );
 };
@@ -27,13 +23,11 @@ const styles = StyleSheet.create({
     height: 350,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    // backgroundColor: 'green',
     zIndex: 0,
     opacity: 1,
   },
 
   text: {
     marginTop: 70,
-    // color: 'white',
   },
 });

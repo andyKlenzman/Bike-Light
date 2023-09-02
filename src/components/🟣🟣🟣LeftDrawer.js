@@ -1,7 +1,10 @@
-import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+// This file is the screen on the left side of the app, containing the selectors for various light modes. 
+
+
+
+import {StyleSheet, View} from 'react-native';
 import {DrawerStyles} from '../styles/DrawerStyles';
 import theme from '../styles/theme';
-import {ListItem} from './🟡ListItem';
 import {ItemSelector} from './🟢🟢ItemSelector';
 import {
   incrementInteractionMode,
@@ -16,6 +19,11 @@ import {useSelector} from 'react-redux';
 import {selectActiveInteractionMode} from '../state/selectors/interactionMode/selectActiveInteractionMode';
 import {selectActiveLightMode} from '../state/selectors/lightMode/selectActiveLightMode';
 import {useDispatch} from 'react-redux';
+
+
+
+
+
 const LeftDrawer = () => {
   const dispatch = useDispatch();
   const activeInteractionMode = useSelector(selectActiveInteractionMode);

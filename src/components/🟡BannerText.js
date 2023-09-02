@@ -1,3 +1,5 @@
+// This file is the Text shown in the app status bar. It works by reading the app state, and displaying the appropritate app value.
+
 import {StyleSheet, View, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Animated, {
@@ -13,9 +15,11 @@ import {useSelector} from 'react-redux';
 import readSensors from '../utils/Sensors';
 
 export const BannerText = () => {
+  const appStatus = useSelector(state => state.appStatus.status); // text displayed on banner
   const {RotationSensor} = readSensors();
   const isSendingSignal = useSelector(state => state.bluetooth.isSendingSignal);
 
+  // These styles create the responsive border when the signal is sending.
   const feedbackStyles = useAnimatedStyle(() => {
     if (isSendingSignal) {
       const color = Math.abs(RotationSensor.sensor.value.yaw * 100);
@@ -30,10 +34,10 @@ export const BannerText = () => {
   });
 
   const rotation = useSharedValue(0);
-  const appStatus = useSelector(state => state.appStatus.status);
+
+  //if the bannerText icon is set to spin, animated styles will rotate the icon.
   const animatedStyle = useAnimatedStyle(() => {
     if (appStatus.spin) {
-      //if set to spin, animated styles activates.
       return {
         transform: [
           {
@@ -46,6 +50,7 @@ export const BannerText = () => {
     }
   }, [rotation.value]);
 
+  // runs the spinning icon on repeat
   useEffect(() => {
     rotation.value = withRepeat(
       withTiming(360, {
@@ -54,13 +59,12 @@ export const BannerText = () => {
       }),
       -1,
     );
-    // return () => cancelAnimation(rotation);
-  }, []);
+  }, [appStatus]);
 
   return (
     <Animated.View style={[styles.container, feedbackStyles]}>
       <View style={styles.bannerContainer}>
-        {appStatus.icon ? ( //adds icon if specified in props
+        {appStatus.icon ? ( //adds an icon if specified
           <Animated.View style={[animatedStyle, styles.iconContainer]}>
             <Icon
               name={`${appStatus.icon}`}
@@ -104,8 +108,7 @@ const styles = StyleSheet.create({
     maxHeight: theme.componentRatios.appStatus,
     borderTopWidth: 2,
     borderTopColor: theme.colors.primaryBorder,
-    // borderBottomWidth: 2,
-    // borderBottomColor: theme.colors.primaryBorder,
+
     width: 'auto',
   },
 });

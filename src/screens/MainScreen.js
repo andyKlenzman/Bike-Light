@@ -1,7 +1,7 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import NavButtons from '../components/🔴🔴🔴🔴NavButtons';
 import Drawers from '../components/🔴🔴🔴🔴Drawers';
-
+import QuestionButton from '../components/🟡QuestionButton';
 import AppStatus from '../components/🔴🔴🔴🔴AppStatus';
 import {useEffect} from 'react';
 import {bleManager} from '../utils/Bluetooth/bluetoothManager';
@@ -12,6 +12,7 @@ import {
 } from '../state/slices/bluetoothSlice';
 import Header from '../components/🔴🔴🔴🔴Header';
 import {Curtain} from '../components/🔴🔴🔴🔴Curtain';
+import theme from '../styles/theme';
 
 const MainScreen = () => {
   const dispatch = useDispatch();
@@ -29,6 +30,7 @@ const MainScreen = () => {
     <View style={styles.container}>
       <Header />
       <Curtain />
+      <QuestionButton />
       <Drawers />
       <AppStatus />
       <NavButtons />
@@ -52,9 +54,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 7,
     opacity: 0.5,
-  },
-  text: {
-    color: 'grey',
-    fontSize: 50,
   },
 });
