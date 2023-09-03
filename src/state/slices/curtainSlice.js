@@ -5,14 +5,14 @@ export const curtainSlice = createSlice({
   initialState: initalState.curtain,
   reducers: {
     changeCurtainState(state, action) {
-      state.position = action.payload;
+      state.state = action.payload;
     },
     changeCurtainContent(state, action) {
-      state.contentType = action.payload.contentType;
+      state.content = action.payload.content;
     },
     changeCurtainStateAndContent(state, action) {
-      state.position = action.payload.position;
-      state.contentType = action.payload.contentType;
+      state.state = action.payload.state;
+      state.content = action.payload.content;
     },
   },
   // extraReducers: {}, //using builder callback from now on

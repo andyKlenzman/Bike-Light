@@ -16,12 +16,12 @@ import {GestureDetector, Gesture} from 'react-native-gesture-handler';
 import {curtainVals} from '../state/config/curtainState';
 import {
   changeCurtainState,
-  changeCurtainContent,
+  changeCurtainStateAndContent,
 } from '../state/slices/curtainSlice';
 import readSensors from '../utils/Sensors';
 import Tutorial from './🟢🟢Tutorial';
 import FAQs from './🟢🟢FAQs';
-
+import ScreenLock from './🟢🟢ScreenLock';
 export const Curtain = () => {
   const dispatch = useDispatch();
   const screenHeight = -Dimensions.get('window').height;
@@ -29,21 +29,21 @@ export const Curtain = () => {
 
   // Selectors from redux state
   const isSendingSignal = useSelector(state => state.bluetooth.isSendingSignal);
-  const contentType = useSelector(state => state.curtain.contentType);
-  const curtainPosition = useSelector(state => state.curtain.position);
+  const curtainContent = useSelector(state => state.curtain.content);
+  const curtainState = useSelector(state => state.curtain.state);
 
   // Constants for the content of the Curtain
   //change this to one value and use a switch case
-  const isTutorial = contentType === curtainVals.content.tutorial;
-  const isFAQ = contentType === curtainVals.content.faq;
-  const isLocked = contentType === curtainVals.content.screenLock;
+  const isTutorial = curtainContent === curtainVals.content.tutorial;
+  const isFAQ = curtainContent === curtainVals.content.faq;
+  const isLocked = curtainContent === curtainVals.content.screenLock;
   const start = useSharedValue(curtainVals.coordinates.closed);
   const offset = useSharedValue(curtainVals.coordinates.closed);
   const isPressed = useSharedValue(false);
 
   // constants that read application state, and will later be used to  conditionally render the curtain state and style.
-  const isCurtainOpen = curtainPosition === curtainVals.state.open;
-  const isCurtainPeeking = curtainPosition === curtainVals.state.peeking;
+  const isCurtainOpen = curtainState === curtainVals.state.open;
+  const isCurtainPeeking = curtainState === curtainVals.state.peeking;
 
   ////////////////////
   ////////////////////
@@ -61,7 +61,7 @@ export const Curtain = () => {
     let newState;
 
     if (isSendingSignal) {
-      switch (curtainPosition) {
+      switch (curtainState) {
         case curtainVals.state.open:
           newCoordinates = curtainVals.coordinates.open;
           newState = curtainVals.state.open;
@@ -75,9 +75,14 @@ export const Curtain = () => {
       newState = curtainVals.state.closed;
     }
 
-    dispatch(changeCurtainState(newState));
+    dispatch(
+      changeCurtainStateAndContent({
+        state: newState,
+        content: curtainVals.content.screenLock,
+      }),
+    );
     start.value = offset.value = newCoordinates;
-  }, [curtainPosition, isSendingSignal]);
+  }, [curtainState, isSendingSignal]);
 
   ////////////////////
   ////////////////////
@@ -101,11 +106,18 @@ export const Curtain = () => {
       const translation = start.value + e.translationY;
 
       // Ensure the value stays within the height of the screen
-      const newOffsetValue = Math.min(
-        Math.max(translation, curtainVals.coordinates.closed),
-        screenHeight,
+
+      const newOffsetValue = Math.max(
+        Math.max(translation, screenHeight),
+        curtainVals.coordinates.closed,
       );
-      offset.value = newOffsetValue;
+
+      // prevents curtain from moving past the bottom of the screen
+      if (newOffsetValue > 0) {
+        offset.value = 0;
+      } else {
+        offset.value = newOffsetValue;
+      }
     })
     .onEnd(() => {
       start.value = offset.value;
@@ -124,7 +136,6 @@ export const Curtain = () => {
           newState = curtainVals.state.peeking;
         }
       } else if (isCurtainPeeking) {
-        console.log(offset.value, curtainVals.transitions.whenClosed);
         if (offset.value <= curtainVals.transitions.whenClosed) {
           newCoordinates = curtainVals.coordinates.peeking;
           newState = curtainVals.state.peeking;
@@ -171,38 +182,10 @@ export const Curtain = () => {
     }
   });
 
-  const animatedTextStyles = useAnimatedStyle(() => {
-    if (isPressed.value) {
-      return {
-        opacity: 0,
-      };
-    } else {
-      return {
-        opacity: 1,
-      };
-    }
-  });
-
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View style={[styles.container, animatedContainerStyles]}>
-        {isLocked ? (
-          <View>
-            {isCurtainOpen ? null : (
-              <Animated.Text style={[styles.text, animatedTextStyles]}>
-                SWIPE TO LOCK SCREEN
-              </Animated.Text>
-            )}
-
-            <Icon
-              size={theme.iconSize.medium}
-              style={
-                isCurtainOpen ? styles.fullyOpenIcon : styles.partiallyOpenIcon
-              }
-              name={isCurtainOpen ? 'lock' : 'arrow-down'}
-            />
-          </View>
-        ) : null}
+        {isLocked ? <ScreenLock /> : null}
 
         {isFAQ ? <FAQs /> : null}
         {isTutorial ? <Tutorial /> : null}
@@ -216,7 +199,7 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
     width: '100%',
-    backgroundColor: 'hsla(200, 50%,30%, .9)', // can you create a blur like in tshare
+    backgroundColor: 'hsla(200, 90%,90%, .9)', // can you create a blur like in tshare
     position: 'absolute',
     zIndex: 1,
     flex: 1,
@@ -224,19 +207,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 80,
   },
-  iconContainer: {},
-  text: {
-    fontSize: theme.fontSize.medium,
-    fontWeight: 'bold',
-    color: theme.colors.primaryFont,
-    marginTop: '100%',
-  },
-  partiallyOpenIcon: {
-    color: theme.colors.primaryIcon,
-    marginTop: 20,
-  },
-  fullyOpenIcon: {
-    color: theme.colors.primaryIcon,
-    marginTop: 0,
-  },
+  
 });

@@ -1,16 +1,8 @@
 Doing:
--- making curtain code more readable
-  1) Fix the final details for the curtain
-  2) get screen lock to work
-  3) 
+-- Fix the question button
+-- Code the tutorial
 
 
-Go piece by piece
-
-Smooth animation depends on if statements/ switch case inside of the Animated styles panel
-
-
--- you know, I might be able to reduce a lot of complexity by not putting everything in the same curtain....ugh but ive come so far already. 
 ///////////////////
 ///////////////////
 ///////////////////
@@ -22,6 +14,8 @@ Smooth animation depends on if statements/ switch case inside of the Animated st
 ///////////////////
 ///////////////////
 ///
+
+
 FEATURES:
 -- Etsy shop
 -- cache if user has seen intro
@@ -33,6 +27,7 @@ BUGS
 BEFORE REVIEW
 -- clean up code for github
 -- make logo and descriptions
+-- look up or ask forum for string LED lights and work with family to make a container.
 ///////////////////
 ///////////////////
 ///////////////////

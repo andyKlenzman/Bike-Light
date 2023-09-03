@@ -7,8 +7,8 @@ import {curtainVals} from '../state/config/curtainState';
 
 const QuestionButton = () => {
   const dispatch = useDispatch();
-  const isCurtainOpen = useSelector(state => state.curtain.position);
-  const showButton = isCurtainOpen === curtainVals.state.closed ? true : false;
+  const curtainState = useSelector(state => state.curtain.state);
+  const showButton = curtainState === curtainVals.state.closed ? true : false;
 
   //hide button if the curtain is over it
   if (showButton) {
@@ -19,8 +19,8 @@ const QuestionButton = () => {
           onPress={() => {
             dispatch(
               changeCurtainStateAndContent({
-                position: curtainVals.state.open,
-                contentType: curtainVals.content.tutorial,
+                state: curtainVals.state.open,
+                content: curtainVals.content.tutorial,
               }),
             );
           }}>

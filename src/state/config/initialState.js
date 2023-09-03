@@ -21,8 +21,8 @@ export const initalState = {
     openDrawer: 'right',
   },
   curtain: {
-    position: curtainVals.coordinates.closed,
-    contentType: curtainVals.content.screenLock,
+    state: curtainVals.coordinates.closed,
+    content: curtainVals.content.screenLock,
   },
   bluetooth: {
     isBluetoothOn: 'PoweredOff', //correct wording
