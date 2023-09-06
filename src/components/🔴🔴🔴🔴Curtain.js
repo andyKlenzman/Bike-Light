@@ -34,9 +34,6 @@ export const Curtain = () => {
 
   // Constants for the content of the Curtain
   //change this to one value and use a switch case
-  const isTutorial = curtainContent === curtainVals.content.tutorial;
-  const isFAQ = curtainContent === curtainVals.content.faq;
-  const isLocked = curtainContent === curtainVals.content.screenLock;
   const start = useSharedValue(curtainVals.coordinates.closed);
   const offset = useSharedValue(curtainVals.coordinates.closed);
   const isPressed = useSharedValue(false);
@@ -44,6 +41,11 @@ export const Curtain = () => {
   // constants that read application state, and will later be used to  conditionally render the curtain state and style.
   const isCurtainOpen = curtainState === curtainVals.state.open;
   const isCurtainPeeking = curtainState === curtainVals.state.peeking;
+
+  //constatns to conditionally render curtain contnent
+  const isTutorial = curtainContent === curtainVals.content.tutorial;
+  const isFAQ = curtainContent === curtainVals.content.faq;
+  const isLocked = curtainContent === curtainVals.content.screenLock;
 
   ////////////////////
   ////////////////////
@@ -71,16 +73,18 @@ export const Curtain = () => {
           newState = curtainVals.state.peeking;
       }
     } else {
-      newCoordinates = curtainVals.coordinates.closed;
-      newState = curtainVals.state.closed;
+      switch (curtainState) {
+        case curtainVals.state.open:
+          newCoordinates = curtainVals.coordinates.open;
+          newState = curtainVals.state.open;
+          break;
+        default:
+          newCoordinates = curtainVals.coordinates.closed;
+          newState = curtainVals.state.closed;
+      }
     }
 
-    dispatch(
-      changeCurtainStateAndContent({
-        state: newState,
-        content: curtainVals.content.screenLock,
-      }),
-    );
+    dispatch(changeCurtainState(newState));
     start.value = offset.value = newCoordinates;
   }, [curtainState, isSendingSignal]);
 
@@ -126,14 +130,25 @@ export const Curtain = () => {
       // faciliates the curtains positions to new locations based on the user's gestures commands
       let newCoordinates;
       let newState;
-
+      //i need to
       if (isCurtainOpen) {
-        if (offset.value > curtainVals.transitions.whenOpen) {
-          newCoordinates = curtainVals.coordinates.open;
-          newState = curtainVals.state.open;
-        } else {
-          newCoordinates = curtainVals.coordinates.peeking;
-          newState = curtainVals.state.peeking;
+        //if the content is LockedScreen, then transition between peeking and open states, or else if it FAW or tutorial, just close the screen.
+        if (isLocked) {
+          if (offset.value > curtainVals.transitions.whenOpen) {
+            newCoordinates = curtainVals.coordinates.open;
+            newState = curtainVals.state.open;
+          } else {
+            newCoordinates = curtainVals.coordinates.peeking;
+            newState = curtainVals.state.peeking;
+          }
+        } else if (isFAQ || isTutorial) {
+          if (offset.value < curtainVals.transitions.whenOpen) {
+            newCoordinates = curtainVals.coordinates.closed;
+            newState = curtainVals.state.closed;
+          } else {
+            newCoordinates = curtainVals.coordinates.open;
+            newState = curtainVals.state.open;
+          }
         }
       } else if (isCurtainPeeking) {
         if (offset.value <= curtainVals.transitions.whenClosed) {
@@ -186,7 +201,6 @@ export const Curtain = () => {
     <GestureDetector gesture={gesture}>
       <Animated.View style={[styles.container, animatedContainerStyles]}>
         {isLocked ? <ScreenLock /> : null}
-
         {isFAQ ? <FAQs /> : null}
         {isTutorial ? <Tutorial /> : null}
       </Animated.View>
@@ -205,7 +219,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 80,
   },
-  
 });

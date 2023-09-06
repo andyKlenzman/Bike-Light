@@ -2,6 +2,8 @@ import {sendDataToBluetooth} from './sendDataToBluetooth';
 import {transformSensorDataForBluetooth} from '../transformSensorDataForBluetooth';
 import {setIsSendingSignal} from '../../state/slices/bluetoothSlice';
 import KeepAwake from 'react-native-keep-awake';
+import {changeCurtainStateAndContent} from '../../state/slices/curtainSlice';
+import {curtainVals} from '../../state/config/curtainState';
 /*
 sends sensor data to peripheral bluetooth
 */
@@ -24,7 +26,15 @@ export const startBluetoothCommunication = async (
       );
     }
 
-    dispatch(setIsSendingSignal(true)); //toggles UI button
+    dispatch(setIsSendingSignal(true));
+    dispatch(
+      changeCurtainStateAndContent({
+        state: curtainVals.state.peeking,
+        content: curtainVals.content.screenLock,
+      }),
+    );
+
+    //toggles UI button
     runBluetooth = true; //toggles while loop
     KeepAwake.activate(); //keeps screen awake while sending data to avoid app going to background mode
     //does it fuck with data sending
@@ -34,7 +44,7 @@ export const startBluetoothCommunication = async (
       try {
         const transformedData = transformSensorDataForBluetooth(
           lightModeKey,
-          RotationSensor
+          RotationSensor,
         );
 
         await sendDataToBluetooth(transformedData, connectedDevices[0]); //

@@ -2,22 +2,21 @@
 
 import React from 'react';
 import {View, Text, StyleSheet, FlatList} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import theme from '../styles/theme';
 import {FAQList} from '../content/FAQList';
 import PlaceholderItem from './PlaceholderItem';
+import ItemSeperator from './🟡ItemSeperator';
 
 const FAQs = () => {
   return (
-    <View style={styles.container}>
+    <View style={styles.listContainer}>
       <FlatList
         data={FAQList}
         keyExtractor={item => item.question}
         style={styles.list}
         renderItem={({item}) => <FAQItem item={item} />}
         ListEmptyComponent={PlaceholderItem}
-        inverted
-        scrollEnabled={false}
+        // scrollEnabled={false}
         ItemSeparatorComponent={ItemSeperator}
       />
     </View>
@@ -25,8 +24,9 @@ const FAQs = () => {
 };
 
 const FAQItem = ({item}) => {
+  console.log(item);
   return (
-    <View style={styles.container}>
+    <View style={styles.itemContainer}>
       <Text style={styles.questionText}>{item.question}</Text>
       <Text style={styles.answerText}>{item.answer}</Text>
     </View>
@@ -34,27 +34,30 @@ const FAQItem = ({item}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  listContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'black',
+    minHeight: '100%',
+    minWidth: '100%',
+  },
+  itemContainer: {
+    margin: '8%',
   },
   list: {
-    backgroundColor: 'red',
     flexGrow: 0,
   },
 
   questionText: {
-    fontSize: theme.fontSize.large,
+    fontSize: theme.fontSize.medium,
     color: theme.colors.primaryFont,
     fontWeight: 'bold',
-    marginTop: 30,
   },
   answerText: {
-    fontSize: theme.fontSize.large,
+    fontSize: theme.fontSize.small,
     color: theme.colors.primaryFont,
     fontWeight: 'bold',
-    marginTop: 30,
   },
 });
 

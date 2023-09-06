@@ -1,4 +1,4 @@
-import {StyleSheet,  View, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useDispatch, useSelector} from 'react-redux';
 import theme from '../styles/theme';
@@ -8,10 +8,9 @@ import {curtainVals} from '../state/config/curtainState';
 const QuestionButton = () => {
   const dispatch = useDispatch();
   const curtainState = useSelector(state => state.curtain.state);
-  const showButton = curtainState === curtainVals.state.closed ? true : false;
 
   //hide button if the curtain is over it
-  if (showButton) {
+  if (curtainState === curtainVals.state.closed) {
     return (
       <View style={styles.container}>
         <TouchableOpacity
@@ -20,11 +19,10 @@ const QuestionButton = () => {
             dispatch(
               changeCurtainStateAndContent({
                 state: curtainVals.state.open,
-                content: curtainVals.content.tutorial,
+                content: curtainVals.content.faq,
               }),
             );
           }}>
-          {/* <Text style={styles.text}>FAQs</Text> */}
           <Icon
             name="question-circle-o"
             size={theme.iconSize.medium}
