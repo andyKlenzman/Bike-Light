@@ -5,8 +5,7 @@ import {appStatusReducer} from './slices/appStatusSlice';
 import {interactionModeReducer} from './slices/interactionModeSlice';
 import {lightModeReducer} from './slices/lightModeSlice';
 import {curtainReducer} from './slices/curtainSlice';
-
-
+import {introReducer} from './slices/introSlice';
 export const store = configureStore({
   reducer: {
     drawer: drawerReducer,

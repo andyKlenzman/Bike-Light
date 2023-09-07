@@ -6,10 +6,12 @@ import theme from '../styles/theme';
 import {FAQList} from '../content/FAQList';
 import PlaceholderItem from './PlaceholderItem';
 import ItemSeperator from './🟡ItemSeperator';
+import ExitButton from './🟡ExitButton';
 
 const FAQs = () => {
   return (
     <View style={styles.listContainer}>
+      <ExitButton />
       <FlatList
         data={FAQList}
         keyExtractor={item => item.question}
@@ -41,10 +43,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     minHeight: '100%',
     minWidth: '100%',
-  },
-  itemContainer: {
     margin: '8%',
   },
+  itemContainer: {},
   list: {
     flexGrow: 0,
   },

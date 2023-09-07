@@ -31,4 +31,7 @@ export const initalState = {
     scannedDevices: [],
     isSendingSignal: false,
   },
+  intro: {
+    isViewed: false,
+  },
 };

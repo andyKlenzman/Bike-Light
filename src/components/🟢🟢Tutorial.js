@@ -12,6 +12,7 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 import {useEffect} from 'react';
+import ExitButton from './🟡ExitButton';
 
 const Tutorial = () => {
   const rotation = useSharedValue(0);
@@ -37,8 +38,11 @@ const Tutorial = () => {
     );
   }, []);
 
+
+  
   return (
     <View style={styles.container}>
+      <ExitButton />
       <View style={styles.visualContainer}>
         <Animated.View style={rotatingPhoneIconStyle}>
           <Icon name="check" size={45} color="#cccccc" />
@@ -51,8 +55,7 @@ const Tutorial = () => {
         </View>
       </View>
       <Text style={styles.title}>
-        Connect to bluetooth lights and move your phone to create
-        lightshows
+        Connect to bluetooth lights and move your phone to create lightshows
       </Text>
     </View>
   );
@@ -61,7 +64,7 @@ const Tutorial = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-   
+
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -37,8 +37,6 @@ export const startBluetoothCommunication = async (
     //toggles UI button
     runBluetooth = true; //toggles while loop
     KeepAwake.activate(); //keeps screen awake while sending data to avoid app going to background mode
-    //does it fuck with data sending
-    //it might be still sending data. Why IDK
 
     while (runBluetooth) {
       try {

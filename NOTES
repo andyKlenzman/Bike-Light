@@ -1,10 +1,12 @@
 Doing:
--- make an exit button for the FAQ and tutorial
+-- check exit button
+-- Code the tutorial (prob just use animation software, forget the complicated shit)
+  ----made a start on the async store, will have to iron out the details
 
-
--- Code the tutorial
-
-
+Resist Temptation to:
+-- add more modes
+-- go beyond MVP
+-- 
 ///////////////////
 ///////////////////
 ///////////////////
