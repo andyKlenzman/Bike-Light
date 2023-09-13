@@ -8,9 +8,10 @@ import {curtainVals} from '../state/config/curtainState';
 const QuestionButton = () => {
   const dispatch = useDispatch();
   const curtainState = useSelector(state => state.curtain.state);
-
+  
   //hide button if the curtain is over it
   if (curtainState === curtainVals.state.closed) {
+    
     return (
       <View style={styles.container}>
         <TouchableOpacity
@@ -61,7 +62,6 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSize.small,
   },
   icon: {
-    color: theme.colors.primaryBorder,
     color: 'grey',
     fontWeight: 100,
     marginRight: 20,

@@ -1,24 +1,22 @@
-import {StyleSheet, View, TouchableOpacity} from 'react-native';
+import {StyleSheet, View, TouchableOpacity, Text} from 'react-native';
 import {useDispatch} from 'react-redux';
 import theme from '../styles/theme';
 import {changeCurtainState} from '../state/slices/curtainSlice';
 import {curtainVals} from '../state/config/curtainState';
-import {Text} from 'react-native-svg';
 
 const ExitButton = () => {
   const dispatch = useDispatch();
 
   //hide button if the curtain is over i
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.iconContainer}
-        onPress={() => {
-          dispatch(changeCurtainState(curtainVals.state.closed));
-        }}>
-        <Text style={styles.icon}>X</Text>
-      </TouchableOpacity>
-    </View>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => {
+        dispatch(changeCurtainState(curtainVals.state.closed))
+        console.log("button pressed");
+      }}>
+      <Text style={styles.icon}>Close</Text>
+    </TouchableOpacity>
   );
 };
 
@@ -26,31 +24,21 @@ export default ExitButton;
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    flex: 1,
+    // flex: 1,
+    // alignItems: 'flex-end',
+    minWidth: 40,
+    minHeight: 40,
+  },
 
-    width: '100%',
-    alignItems: 'flex-end',
-    zIndex: 1,
-  },
-  iconContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 10,
-    marginRight: 10,
-  },
-  text: {
-    color: theme.colors.primaryBorder,
-    color: 'grey',
-    fontWeight: 400,
-    fontSize: theme.fontSize.small,
-  },
   icon: {
-    color: theme.colors.primaryBorder,
     color: 'grey',
-    fontWeight: 100,
-    marginRight: 20,
-    marginLeft: 10,
+    fontWeight: 700,
+    fontSize: theme.iconSize.medium,
+  },
+  circleBorder: {
+    borderWidth: 2, // Adjust border width as needed
+    borderColor: 'grey',
+    borderRadius: 400, // Set to half the width/height to create a circle
+    padding: 5, // Adjust padding as needed to control the size of the circle
   },
 });

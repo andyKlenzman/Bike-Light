@@ -27,12 +27,7 @@ export const startBluetoothCommunication = async (
     }
 
     dispatch(setIsSendingSignal(true));
-    dispatch(
-      changeCurtainStateAndContent({
-        state: curtainVals.state.peeking,
-        content: curtainVals.content.screenLock,
-      }),
-    );
+  
 
     //toggles UI button
     runBluetooth = true; //toggles while loop

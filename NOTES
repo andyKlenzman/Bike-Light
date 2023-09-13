@@ -1,5 +1,9 @@
 Doing:
--- check exit button
+-- Refactor code to seperate curtain code
+  - holdon, there might be another issue. Did not know that it was firing in onupdate each time....maybe I do have to refactor.
+  - okay, it looks like it is working. Style the button, I could refactor the code in curtain, but i've got to get this thing done bythe end of the month. Let's just make the welcome and work on getting it to the app store!
+
+
 -- Code the tutorial (prob just use animation software, forget the complicated shit)
   ----made a start on the async store, will have to iron out the details
 

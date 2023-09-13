@@ -1,11 +1,9 @@
 // This file handles the conditional rendering, gesture control, positioning, and content of the curtain feature.
 
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useEffect} from 'react';
-import theme from '../styles/theme';
 import {Dimensions} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -17,6 +15,7 @@ import {curtainVals} from '../state/config/curtainState';
 import {
   changeCurtainState,
   changeCurtainStateAndContent,
+  changeCurtainContent,
 } from '../state/slices/curtainSlice';
 import readSensors from '../utils/Sensors';
 import Tutorial from './🟢🟢Tutorial';
@@ -58,35 +57,53 @@ export const Curtain = () => {
   ////////////////////
 
   // Sets the coordinates and the position of the curtain based on the app state.
+
   useEffect(() => {
     let newCoordinates;
-    let newState;
+    console.log('Is sending signal useEffect fires');
 
-    if (isSendingSignal) {
-      switch (curtainState) {
-        case curtainVals.state.open:
-          newCoordinates = curtainVals.coordinates.open;
-          newState = curtainVals.state.open;
-          break;
-        default:
-          newCoordinates = curtainVals.coordinates.peeking;
-          newState = curtainVals.state.peeking;
-      }
-    } else {
-      switch (curtainState) {
-        case curtainVals.state.open:
-          newCoordinates = curtainVals.coordinates.open;
-          newState = curtainVals.state.open;
-          break;
-        default:
-          newCoordinates = curtainVals.coordinates.closed;
-          newState = curtainVals.state.closed;
-      }
+    switch (curtainState) {
+      case curtainVals.state.open:
+        newCoordinates = curtainVals.coordinates.open;
+        // newState = curtainVals.state.open;
+        break;
+      case curtainVals.state.peeking:
+        newCoordinates = curtainVals.coordinates.peeking;
+        // newState = curtainVals.state.peeking;
+        break;
+      default:
+      // newState = curtainVals.state.closed;
+    }
+    if (newCoordinates) {
+      dispatch(changeCurtainContent(curtainVals.content.screenLock));
+      start.value = offset.value = newCoordinates;
+    }
+  }, [isSendingSignal]);
+
+  useEffect(() => {
+    let newCoordinates;
+    console.log('FIRE ');
+
+    switch (curtainState) {
+      case curtainVals.state.closed:
+        console.log('CASE closed');
+        newCoordinates = curtainVals.coordinates.closed;
+        break;
+      case curtainVals.state.open:
+        console.log('CASE OPEN');
+        newCoordinates = curtainVals.coordinates.open;
+        break;
+      default:
+        console.log('CASE DEFAULT');
+
+      // newCoordinates = curtainVals.coordinates.closed;
     }
 
-    dispatch(changeCurtainState(newState));
-    start.value = offset.value = newCoordinates;
-  }, [curtainState, isSendingSignal]);
+    console.log('New curtain state', newCoordinates, curtainState);
+    if (newCoordinates !== undefined) {
+      start.value = offset.value = newCoordinates;
+    }
+  }, [curtainState]);
 
   ////////////////////
   ////////////////////
@@ -99,6 +116,7 @@ export const Curtain = () => {
   ////////////////////
 
   const changeCurtainStateWrapper = arg => {
+    console.log('Running state wrapper');
     dispatch(changeCurtainState(arg));
   };
 
@@ -142,12 +160,18 @@ export const Curtain = () => {
             newState = curtainVals.state.peeking;
           }
         } else if (isFAQ || isTutorial) {
+          console.log(
+            'In the onUpdate Offset',
+            offset.value,
+            curtainVals.transitions.whenOpen,
+            offset.value < curtainVals.transitions.whenOpen,
+          );
           if (offset.value < curtainVals.transitions.whenOpen) {
-            newCoordinates = curtainVals.coordinates.closed;
-            newState = curtainVals.state.closed;
-          } else {
             newCoordinates = curtainVals.coordinates.open;
             newState = curtainVals.state.open;
+          } else {
+            newCoordinates = curtainVals.coordinates.closed;
+            newState = curtainVals.state.closed;
           }
         }
       } else if (isCurtainPeeking) {
@@ -221,3 +245,42 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
+// useEffect(() => {
+//   let newCoordinates;
+//   let newState;
+
+//   if (isSendingSignal) {
+//     console.log('Is sending signal');
+//     switch (curtainState) {
+//       case curtainVals.state.open:
+//         newCoordinates = curtainVals.coordinates.open;
+//         newState = curtainVals.state.open;
+//         break;
+//       default:
+//         newCoordinates = curtainVals.coordinates.peeking;
+//         newState = curtainVals.state.peeking;
+//     }
+//   } else {
+//     switch (curtainState) {
+//       case curtainVals.state.open:
+//         console.log('CASE OPEN');
+//         newCoordinates = curtainVals.coordinates.open;
+//         newState = curtainVals.state.open;
+//         break;
+//       case curtainVals.state.closed:
+//         console.log('CASE CLOSED');
+//         newCoordinates = curtainVals.coordinates.closed;
+//         newState = curtainVals.state.closed;
+//         break;
+//       default:
+//         console.log('CASE DEFAULT');
+//         newCoordinates = curtainVals.coordinates.closed;
+//         newState = curtainVals.state.closed;
+//     }
+//   }
+
+//   console.log('New curtain state', newState, newCoordinates);
+//   dispatch(changeCurtainState(newState));
+//   start.value = offset.value = newCoordinates;
+// }, [curtainState, isSendingSignal]);

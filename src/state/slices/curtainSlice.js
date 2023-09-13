@@ -8,7 +8,7 @@ export const curtainSlice = createSlice({
       state.state = action.payload;
     },
     changeCurtainContent(state, action) {
-      state.content = action.payload.content;
+      state.content = action.payload;
     },
     changeCurtainStateAndContent(state, action) {
       state.state = action.payload.state;

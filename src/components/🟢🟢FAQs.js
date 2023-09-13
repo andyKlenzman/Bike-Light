@@ -11,7 +11,7 @@ import ExitButton from './🟡ExitButton';
 const FAQs = () => {
   return (
     <View style={styles.listContainer}>
-      <ExitButton />
+   
       <FlatList
         data={FAQList}
         keyExtractor={item => item.question}
@@ -21,12 +21,12 @@ const FAQs = () => {
         // scrollEnabled={false}
         ItemSeparatorComponent={ItemSeperator}
       />
+      <ExitButton />
     </View>
   );
 };
 
 const FAQItem = ({item}) => {
-  console.log(item);
   return (
     <View style={styles.itemContainer}>
       <Text style={styles.questionText}>{item.question}</Text>
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     minHeight: '100%',
     minWidth: '100%',
-    margin: '8%',
+    padding: '8%',
   },
   itemContainer: {},
   list: {
