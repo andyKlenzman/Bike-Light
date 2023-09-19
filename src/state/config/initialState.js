@@ -22,7 +22,9 @@ export const initalState = {
   },
   curtain: {
     state: curtainVals.state.closed,
-    content: curtainVals.content.screenLock,
+  },
+  faqContainer: {
+    isOpen: false,
   },
   bluetooth: {
     isBluetoothOn: 'PoweredOff', //correct wording

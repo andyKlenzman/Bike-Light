@@ -13,6 +13,7 @@ import {
 import Header from '../components/🔴🔴🔴🔴Header';
 import {Curtain} from '../components/🔴🔴🔴🔴Curtain';
 import theme from '../styles/theme';
+import {FAQContainer} from '../components/🔴🔴🔴🔴FAQContainer';
 
 const MainScreen = () => {
   const dispatch = useDispatch();

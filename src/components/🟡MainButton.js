@@ -1,6 +1,5 @@
 // this file is the central button in the navbar. It shows active styles when the buetooth device is connected, and is the parent file for facilitating essentual functions like sending datat to the bluetooth device
 
-
 import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useDispatch, useSelector} from 'react-redux';

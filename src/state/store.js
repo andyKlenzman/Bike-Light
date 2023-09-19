@@ -6,6 +6,7 @@ import {interactionModeReducer} from './slices/interactionModeSlice';
 import {lightModeReducer} from './slices/lightModeSlice';
 import {curtainReducer} from './slices/curtainSlice';
 import {introReducer} from './slices/introSlice';
+import {faqContainerReducer} from './slices/faqContainerSlice';
 
 export const store = configureStore({
   reducer: {
@@ -16,5 +17,6 @@ export const store = configureStore({
     interactionMode: interactionModeReducer,
     lightMode: lightModeReducer,
     intro: introReducer,
+    faqContainer: faqContainerReducer,
   },
 });

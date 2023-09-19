@@ -8,11 +8,6 @@ export const curtainVals = {
     peeking: 'peeking',
     open: 'open',
   },
-  content: {
-    screenLock: 'screenLock',
-    intro: 'intro',
-    faq: 'faq',
-  },
   // size of the curtain depending on the state of the curtain
   coordinates: {
     closed: screenHeight,
@@ -20,9 +15,5 @@ export const curtainVals = {
     open: 0,
   },
   // points on the screen where a user swipe will trigger a change in the curtain's state.
-  transitions: {
-    whenClosed: screenHeight * 0.6,
-    whenOpen: screenHeight * 0.5,
-  },
+  transitions: screenHeight * 0.5,
 };
-

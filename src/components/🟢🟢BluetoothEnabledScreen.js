@@ -9,7 +9,7 @@ import {startDeviceScan} from '../utils/Bluetooth/startDeviceScan';
 import {useDispatch, useSelector} from 'react-redux';
 import {setScannedDevices} from '../state/slices/bluetoothSlice';
 import ItemSeperator from './🟡ItemSeperator';
-import PlaceholderItem from './PlaceholderItem';
+import PlaceholderItem from './🟡PlaceholderItem';
 import {PurchaseTile} from './🟡PurchaseTile';
 
 

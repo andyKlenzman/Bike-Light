@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     minWidth: '100%',
     height: 100,
   },
-  placeholderItem: {
+  placeholderItem: { 
     flex: 1,
     backgroundColor: 'grey',
     opacity: 1,

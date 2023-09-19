@@ -4,12 +4,8 @@ import {StyleSheet, View, Text} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Animated, {
   useAnimatedStyle,
-  withTiming,
-  withRepeat,
-  Easing,
 } from 'react-native-reanimated';
-import {useSharedValue} from 'react-native-reanimated';
-import {useEffect} from 'react';
+
 import theme from '../styles/theme';
 import {useSelector} from 'react-redux';
 import readSensors from '../utils/Sensors';
@@ -33,46 +29,13 @@ export const BannerText = () => {
     }
   });
 
-  const rotation = useSharedValue(0);
-
   //if the bannerText icon is set to spin, animated styles will rotate the icon.
-  const animatedStyle = useAnimatedStyle(() => {
-    if (appStatus.spin) {
-      return {
-        transform: [
-          {
-            rotateZ: `${rotation.value}deg`,
-          },
-        ],
-      };
-    } else {
-      return {};
-    }
-  }, [rotation.value]);
 
   // runs the spinning icon on repeat
-  useEffect(() => {
-    rotation.value = withRepeat(
-      withTiming(360, {
-        duration: 2000,
-        easing: Easing.linear,
-      }),
-      -1,
-    );
-  }, [appStatus]);
 
   return (
     <Animated.View style={[styles.container, feedbackStyles]}>
       <View style={styles.bannerContainer}>
-        {appStatus.icon ? ( //adds an icon if specified
-          <Animated.View style={[animatedStyle, styles.iconContainer]}>
-            <Icon
-              name={`${appStatus.icon}`}
-              size={theme.iconSize.small}
-              color="#cccccc"
-            />
-          </Animated.View>
-        ) : null}
         <Text style={styles.bannerText}>{appStatus.text}</Text>
       </View>
     </Animated.View>

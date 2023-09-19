@@ -2,39 +2,28 @@ import {StyleSheet, View, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {useDispatch, useSelector} from 'react-redux';
 import theme from '../styles/theme';
-import {changeCurtainStateAndContent} from '../state/slices/curtainSlice';
-import {curtainVals} from '../state/config/curtainState';
-
+import {controlIsOpen} from '../state/slices/faqContainerSlice';
 const QuestionButton = () => {
   const dispatch = useDispatch();
-  const curtainState = useSelector(state => state.curtain.state);
-  
+  const faqState = useSelector(state => state.faqContainer.isOpen);
+
   //hide button if the curtain is over it
-  if (curtainState === curtainVals.state.closed) {
-    
-    return (
-      <View style={styles.container}>
-        <TouchableOpacity
-          style={styles.iconContainer}
-          onPress={() => {
-            dispatch(
-              changeCurtainStateAndContent({
-                state: curtainVals.state.open,
-                content: curtainVals.content.faq,
-              }),
-            );
-          }}>
-          <Icon
-            name="question-circle-o"
-            size={theme.iconSize.medium}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-      </View>
-    );
-  } else {
-    null;
-  }
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.iconContainer}
+        onPress={() => {
+          dispatch(controlIsOpen(!faqState));
+          console.log(faqState);
+        }}>
+        <Icon
+          name="question-circle-o"
+          size={theme.iconSize.medium}
+          style={styles.icon}
+        />
+      </TouchableOpacity>
+    </View>
+  );
 };
 
 export default QuestionButton;

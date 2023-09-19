@@ -12,15 +12,10 @@ import Animated, {
 } from 'react-native-reanimated';
 import {GestureDetector, Gesture} from 'react-native-gesture-handler';
 import {curtainVals} from '../state/config/curtainState';
-import {
-  changeCurtainState,
-  changeCurtainStateAndContent,
-  changeCurtainContent,
-} from '../state/slices/curtainSlice';
+import {changeCurtainState} from '../state/slices/curtainSlice';
 import readSensors from '../utils/Sensors';
-import Tutorial from './🟢🟢Tutorial';
-import FAQs from './🟢🟢FAQs';
 import ScreenLock from './🟢🟢ScreenLock';
+
 export const Curtain = () => {
   const dispatch = useDispatch();
   const screenHeight = -Dimensions.get('window').height;
@@ -28,11 +23,9 @@ export const Curtain = () => {
 
   // Selectors from redux state
   const isSendingSignal = useSelector(state => state.bluetooth.isSendingSignal);
-  const curtainContent = useSelector(state => state.curtain.content);
   const curtainState = useSelector(state => state.curtain.state);
 
   // Constants for the content of the Curtain
-  //change this to one value and use a switch case
   const start = useSharedValue(curtainVals.coordinates.closed);
   const offset = useSharedValue(curtainVals.coordinates.closed);
   const isPressed = useSharedValue(false);
@@ -41,65 +34,38 @@ export const Curtain = () => {
   const isCurtainOpen = curtainState === curtainVals.state.open;
   const isCurtainPeeking = curtainState === curtainVals.state.peeking;
 
-  //constatns to conditionally render curtain contnent
-  const isTutorial = curtainContent === curtainVals.content.tutorial;
-  const isFAQ = curtainContent === curtainVals.content.faq;
-  const isLocked = curtainContent === curtainVals.content.screenLock;
-
   ////////////////////
   ////////////////////
   ////////////////////
   ////////////////////
-  //STATE HANDLER
+  //SET COORDINATES FOR CURTAIN
   ////////////////////
   ////////////////////
   ////////////////////
   ////////////////////
 
-  // Sets the coordinates and the position of the curtain based on the app state.
-
+  // Sets the coordinates to 'peeking' and changes content to locked screen when bluetooth starts sending signal
   useEffect(() => {
-    let newCoordinates;
-    console.log('Is sending signal useEffect fires');
-
-    switch (curtainState) {
-      case curtainVals.state.open:
-        newCoordinates = curtainVals.coordinates.open;
-        // newState = curtainVals.state.open;
-        break;
-      case curtainVals.state.peeking:
-        newCoordinates = curtainVals.coordinates.peeking;
-        // newState = curtainVals.state.peeking;
-        break;
-      default:
-      // newState = curtainVals.state.closed;
-    }
-    if (newCoordinates) {
-      dispatch(changeCurtainContent(curtainVals.content.screenLock));
-      start.value = offset.value = newCoordinates;
+    if (isSendingSignal) {
+      start.value = offset.value = curtainVals.coordinates.peeking;
+    } else {
+      start.value = offset.value = curtainVals.coordinates.closed;
+      dispatch(changeCurtainState(curtainVals.state.closed));
     }
   }, [isSendingSignal]);
 
   useEffect(() => {
     let newCoordinates;
-    console.log('FIRE ');
-
     switch (curtainState) {
       case curtainVals.state.closed:
-        console.log('CASE closed');
         newCoordinates = curtainVals.coordinates.closed;
         break;
       case curtainVals.state.open:
-        console.log('CASE OPEN');
         newCoordinates = curtainVals.coordinates.open;
         break;
       default:
-        console.log('CASE DEFAULT');
-
-      // newCoordinates = curtainVals.coordinates.closed;
     }
 
-    console.log('New curtain state', newCoordinates, curtainState);
     if (newCoordinates !== undefined) {
       start.value = offset.value = newCoordinates;
     }
@@ -116,7 +82,6 @@ export const Curtain = () => {
   ////////////////////
 
   const changeCurtainStateWrapper = arg => {
-    console.log('Running state wrapper');
     dispatch(changeCurtainState(arg));
   };
 
@@ -126,14 +91,11 @@ export const Curtain = () => {
     })
     .onUpdate(e => {
       const translation = start.value + e.translationY;
-
       // Ensure the value stays within the height of the screen
-
       const newOffsetValue = Math.max(
         Math.max(translation, screenHeight),
         curtainVals.coordinates.closed,
       );
-
       // prevents curtain from moving past the bottom of the screen
       if (newOffsetValue > 0) {
         offset.value = 0;
@@ -145,37 +107,15 @@ export const Curtain = () => {
       start.value = offset.value;
     })
     .onFinalize(() => {
-      // faciliates the curtains positions to new locations based on the user's gestures commands
+      // faciliates the curtains positions to locked positions based on the user's gestures commands
       let newCoordinates;
       let newState;
-      //i need to
+
+      //Constants to determine state and coordinate change
+      const triggerTransition = offset.value <= curtainVals.transitions;
+
       if (isCurtainOpen) {
-        //if the content is LockedScreen, then transition between peeking and open states, or else if it FAW or tutorial, just close the screen.
-        if (isLocked) {
-          if (offset.value > curtainVals.transitions.whenOpen) {
-            newCoordinates = curtainVals.coordinates.open;
-            newState = curtainVals.state.open;
-          } else {
-            newCoordinates = curtainVals.coordinates.peeking;
-            newState = curtainVals.state.peeking;
-          }
-        } else if (isFAQ || isTutorial) {
-          console.log(
-            'In the onUpdate Offset',
-            offset.value,
-            curtainVals.transitions.whenOpen,
-            offset.value < curtainVals.transitions.whenOpen,
-          );
-          if (offset.value < curtainVals.transitions.whenOpen) {
-            newCoordinates = curtainVals.coordinates.open;
-            newState = curtainVals.state.open;
-          } else {
-            newCoordinates = curtainVals.coordinates.closed;
-            newState = curtainVals.state.closed;
-          }
-        }
-      } else if (isCurtainPeeking) {
-        if (offset.value <= curtainVals.transitions.whenClosed) {
+        if (triggerTransition) {
           newCoordinates = curtainVals.coordinates.peeking;
           newState = curtainVals.state.peeking;
         } else {
@@ -183,9 +123,19 @@ export const Curtain = () => {
           newState = curtainVals.state.open;
         }
       }
+      if (isCurtainPeeking) {
+        if (!triggerTransition) {
+          newCoordinates = curtainVals.coordinates.open;
+          newState = curtainVals.state.open;
+        } else {
+          newCoordinates = curtainVals.coordinates.peeking;
+          newState = curtainVals.state.peeking;
+        }
+      }
 
       offset.value = start.value = newCoordinates;
       runOnJS(changeCurtainStateWrapper)(newState);
+
       isPressed.value = false;
     });
 
@@ -224,9 +174,7 @@ export const Curtain = () => {
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View style={[styles.container, animatedContainerStyles]}>
-        {isLocked ? <ScreenLock /> : null}
-        {isFAQ ? <FAQs /> : null}
-        {isTutorial ? <Tutorial /> : null}
+        <ScreenLock />
       </Animated.View>
     </GestureDetector>
   );
@@ -245,42 +193,3 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-
-// useEffect(() => {
-//   let newCoordinates;
-//   let newState;
-
-//   if (isSendingSignal) {
-//     console.log('Is sending signal');
-//     switch (curtainState) {
-//       case curtainVals.state.open:
-//         newCoordinates = curtainVals.coordinates.open;
-//         newState = curtainVals.state.open;
-//         break;
-//       default:
-//         newCoordinates = curtainVals.coordinates.peeking;
-//         newState = curtainVals.state.peeking;
-//     }
-//   } else {
-//     switch (curtainState) {
-//       case curtainVals.state.open:
-//         console.log('CASE OPEN');
-//         newCoordinates = curtainVals.coordinates.open;
-//         newState = curtainVals.state.open;
-//         break;
-//       case curtainVals.state.closed:
-//         console.log('CASE CLOSED');
-//         newCoordinates = curtainVals.coordinates.closed;
-//         newState = curtainVals.state.closed;
-//         break;
-//       default:
-//         console.log('CASE DEFAULT');
-//         newCoordinates = curtainVals.coordinates.closed;
-//         newState = curtainVals.state.closed;
-//     }
-//   }
-
-//   console.log('New curtain state', newState, newCoordinates);
-//   dispatch(changeCurtainState(newState));
-//   start.value = offset.value = newCoordinates;
-// }, [curtainState, isSendingSignal]);

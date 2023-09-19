@@ -41,7 +41,7 @@ export const PurchaseTile = ({}) => {
         <TouchableOpacity
           style={[styles.icons, styles.iconLeft]}
           onPress={() => {
-            Linking.openURL('https://tshare.family/view/0');
+            Linking.openURL('https://linktr.ee/LightbenderLights');
           }}>
           <Icon name="check" size={theme.iconSize.medium} color="green" />
         </TouchableOpacity>
@@ -51,7 +51,7 @@ export const PurchaseTile = ({}) => {
           onPress={() => setIsActive(false)}>
           <Text style={styles.iconRight}>X</Text>
         </TouchableOpacity>
-        <Text style={[styles.title, textStyles]}>Open shop?</Text>
+        <Text style={[styles.title, textStyles]}>Open browser</Text>
       </AnimatedTouchable>
     );
   } else {
@@ -63,7 +63,7 @@ export const PurchaseTile = ({}) => {
         activeOpacity={0.3}
         style={[styles.item]}>
         <Text numberOfLines={1} ellipsizeMode="tail" style={[styles.title]}>
-          + buy lights
+          + get lights
         </Text>
       </AnimatedTouchable>
     );

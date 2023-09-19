@@ -4,33 +4,40 @@ import React from 'react';
 import {View, Text, StyleSheet, FlatList} from 'react-native';
 import theme from '../styles/theme';
 import {FAQList} from '../content/FAQList';
-import PlaceholderItem from './PlaceholderItem';
-import ItemSeperator from './🟡ItemSeperator';
 import ExitButton from './🟡ExitButton';
-
+import {ScrollView} from 'react-native';
 const FAQs = () => {
   return (
     <View style={styles.listContainer}>
-   
-      <FlatList
-        data={FAQList}
-        keyExtractor={item => item.question}
-        style={styles.list}
-        renderItem={({item}) => <FAQItem item={item} />}
-        ListEmptyComponent={PlaceholderItem}
-        // scrollEnabled={false}
-        ItemSeparatorComponent={ItemSeperator}
-      />
       <ExitButton />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}>
+        {FAQList.map((item, index) => {
+          return (
+            <FAQItem
+              key={index}
+              question={item.question}
+              answer={item.answer}
+            />
+          );
+        })}
+      </ScrollView>
     </View>
   );
 };
 
-const FAQItem = ({item}) => {
+const FAQItem = ({question, answer}) => {
   return (
     <View style={styles.itemContainer}>
-      <Text style={styles.questionText}>{item.question}</Text>
-      <Text style={styles.answerText}>{item.answer}</Text>
+      <Text style={styles.questionText}>{question}</Text>
+      {answer.map((answer, index) => {
+        return (
+          <Text key={index} style={styles.answerText}>
+            {answer}
+          </Text>
+        );
+      })}
     </View>
   );
 };
@@ -43,22 +50,27 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     minHeight: '100%',
     minWidth: '100%',
-    padding: '8%',
+    padding: '4%',
   },
-  itemContainer: {},
+  itemContainer: {
+    marginTop: 25,
+  },
   list: {
     flexGrow: 0,
   },
 
   questionText: {
     fontSize: theme.fontSize.medium,
-    color: theme.colors.primaryFont,
+    color: theme.colors.secondaryFont,
     fontWeight: 'bold',
   },
   answerText: {
     fontSize: theme.fontSize.small,
+    lineHeight: 24,
     color: theme.colors.primaryFont,
-    fontWeight: 'bold',
+    marginVertical: 10,
+
+    // fontWeight: 'bold',
   },
 });
 
